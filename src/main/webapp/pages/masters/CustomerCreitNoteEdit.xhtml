@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/pages/template/layoutWithIndividualForm.xhtml">
+	<ui:define name="content">
+		<h:form id="creditNote">
+			<ui:param name="bean" value="#{customerCreditNoteBean}"></ui:param>
+			<title>Orffosoft | CreditNote Edit</title>
+			<!-- Page Header -->
+			<div class="page-header page-header-default">
+				<div class="page-header-content">
+					<div class="page-title">
+						<h4>Edit</h4>
+						<ul class="breadcrumb">
+							<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+									class="icon-home2 position-left"></i>#{msg['home']}</a></li>
+							<li>Online Billing Cabinate</li>
+							<li>Credit Note Edit</li>
+						</ul>
+						<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+					</div>
+					<ui:include src="/pages/pageHeadingElements.xhtml" />
+				</div>
+			</div>
+			<!-- End Page Header -->
+			<div class="content">
+				<div
+					class="panel-group panel-group-control panel-group-control-right m-b-15"
+					id="accordion-control-right">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h6 class="panel-title">
+								Credit Note Master
+								<p:outputLabel styleClass="pull-right">
+									(<span class="mand-red">*</span>
+									<span>#{msg['mand_fields']}</span>)
+								</p:outputLabel>
+							</h6>
+						</div>
+						<div id="accordion-control-right-group1"
+							class="panel-collapse collapse in page-scroll-without-process">
+
+							<div class="panel-body p-t-10">
+								<div class="label-form">
+									<div class="row custom-form-1">
+
+										<p:outputPanel id="tablepanel">
+											<p:dataTable id="table" var="data" class="table"
+												widgetVar="table" tableStyleClass="" lazy="true"
+												value="#{bean.listcustomerDTO}"
+												rowKey="#{data.cusDetailCreditNotePk}"
+												paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+												paginator="true" paginatorPosition="bottom"
+												rowsPerPageTemplate="5,10,15" rows="10" rowIndexVar="idx"
+												emptyMessage="#{msg['no_record_found']}">
+
+												<p:column headerText="#{msg['s_no']}S.no"
+													styleClass="text-center width-3">
+													<h:outputText value="#{idx+1}" />
+												</p:column>
+											
+												<p:column headerText="Type" styleClass="text-center width-3">
+													<h:outputText value="#{data.transactiontype}" />
+												</p:column>
+												<p:column headerText="Billno"
+													styleClass="text-center width-3">
+													<h:outputText value="#{data.billhbillno}" />
+												</p:column>
+												<p:column headerText="Total Credit Amount"
+													styleClass="text-center width-3">
+													<h:outputText value="#{data.totalCreditAmount}" />
+												</p:column>
+												<p:column headerText="Total Paid Amount"
+													styleClass="text-center width-3">
+													<h:outputText value="#{data.paidAmount}" />
+												</p:column>
+												<p:column headerText="Total Pending Amount"
+													styleClass="text-center width-3">
+													<h:outputText
+														value="#{data.totalPendingAmount}" />
+												</p:column>
+												<p:column headerText="Recive Amount"
+													styleClass="text-right width-3">
+
+													<p:inputText id="recveamt"
+														value="#{data.receiveAmount}" disabled="#{data.totalPendingAmount == 0 }">
+
+														<p:keyFilter regEx="/[0.0-9.0]/i" />
+														<p:ajax update="table recveamt" />
+													</p:inputText>
+
+
+												</p:column>
+
+											</p:dataTable>
+
+										</p:outputPanel>
+									</div>
+								</div>
+								<div class="row custom-form-1 label-form">
+									<div class="col-lg-12 col-md-12 col-sm-12 text-right">
+										<p:commandButton value="&#xed6a; #{msg['cancel']}"
+											styleClass="btn btn-sm bg-slate font-iconmoon"
+											action="#{bean.loadListPage}" immediate="true"
+											oncomplete="PF('progressDlg').hide();"
+											title="#{msg['cancel']}" />
+											
+										<p:commandButton id="submit" binding="#{submit}"
+											value="&#xed6e; #{msg['submit']}"
+											title="#{  msg['submit']}"
+											action="#{bean.PaymentRecive}"
+											 onclick="PF('progressDlg').show();"
+											oncomplete="PF('progressDlg').hide();"
+											styleClass="btn btn-sm bg-success font-iconmoon"
+											update="growls">
+										</p:commandButton>
+
+									</div>
+
+								</div>
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

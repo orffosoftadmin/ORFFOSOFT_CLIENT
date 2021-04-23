@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/pages/template/layout.xhtml">
+
+	<ui:define name="content">
+
+		<ui:param name="bean" value="#{customerBillingBean}"></ui:param>
+		<title>Orffosoft | Customer Billing</title>
+		<!-- Page Header -->
+		<div class="page-header page-header-default">
+			<div class="page-header-content">
+				<div class="page-title">
+					<h4>Customer Billing</h4>
+					<ul class="breadcrumb">
+						<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+								class="icon-home2 position-left"></i>#{msg['home']}</a></li>
+						<li>Master</li>
+						<li class="active">Customer Billing</li>
+					</ul>
+					<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+				</div>
+				<ui:include src="/pages/pageHeadingElements.xhtml" />
+			</div>
+		</div>
+		<!-- End Page Header -->
+		<div class="content">
+			<div
+				class="panel-group panel-group-control panel-group-control-right m-b-15"
+				id="accordion-control-right">
+				<div class="panel panel-info ">
+					<div class="panel-heading">
+						<h6 class="panel-title">
+							Customer Billing
+							<p:outputLabel styleClass="pull-right">(
+									<span class="mand-red">*</span>
+								<span>#{msg['mand_fields']}</span>)
+								</p:outputLabel>
+						</h6>
+					</div>
+
+					<div class="page-scroll">
+						<div class="panel-body p-t-10">
+							<h5 class="bord_bot m-t-0">
+								<span class="iform-title"><i class="fa fa-th-large m-r-5"></i>Billing
+									Page</span>
+							</h5>
+							<div class="row custom-form-1 label-form">
+								<div class="form-group">
+									<label class="col-md-3 control-label">Billing Type : </label>
+
+									<div class="col-md-9">
+										<h:panelGrid columns="4" style="margin-bottom:25px"
+											cellpadding="10">
+											<p:selectOneRadio id="billType"
+												value="#{bean.customerBillingType}">
+												<f:selectItem itemLabel="With Customer"
+													itemValue="WITH_CUSTOMER" />
+												<f:selectItem itemLabel="WithOut Customer"
+													itemValue="WITHOUT_CUSTOMER" />
+												<p:ajax event="change" update="bill"></p:ajax>
+											</p:selectOneRadio>
+										</h:panelGrid>
+									</div>
+								</div>
+							</div>
+
+							<div class="row custom-form-1 label-form">
+								<p:outputPanel id="bill">
+									<p:outputPanel
+										rendered="#{bean.customerBillingType eq 'WITH_CUSTOMER'}">
+										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+											<div class="form-group">
+												<p:outputLabel class="fa-input"
+													value="#{msg['mobile_number']}" />
+												<p:outputLabel rendered="true" class="mand-red" value="*"></p:outputLabel>
+												<div class="input-group">
+													<span class="input-group-addon"><i class="icon-hash"></i></span>
+													<p:autoComplete id="mobno" minQueryLength="1"
+														placeholder="Enter At Least 2 Digit" maxlength="10"
+														styleClass="form-control" converter="#{entityConverter}"
+														value="#{bean.selectedcustomerMaster}" itemValue="#{pro}"
+														var="pro" itemLabel="#{pro.primaryContactNumber}"
+														completeMethod="#{bean.mobileAutocomplete}"
+														onstart="PF('progressDlg').show()"
+														onsuccess="PF('progressDlg').hide()" effect="fade">
+														<p:ajax event="itemSelect" update="bill"
+															listener="#{bean.updateMobileNumber}"></p:ajax>
+													</p:autoComplete>
+													<p:keyFilter for="mobno" regEx="/[0-9\s]/i"></p:keyFilter>
+												</div>
+												<h:message for="mobno" class="validation-error-label" />
+												<p:tooltip for="mobno" rendered="true"
+													value="#{msg['customer_name_req']}"></p:tooltip>
+											</div>
+										</div>
+										<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+											<div class="form-group">
+												<p:outputLabel class="fa-input" value="Customer Name" />
+												<p:outputLabel rendered="true" class="mand-red" value="*"></p:outputLabel>
+												<div class="input-group">
+													<span class="input-group-addon"><i class="icon-hash"></i></span>
+													<p:inputText id="cusName" class="form-control"
+														autocomplete="off" maxlength="20"
+														required="#{not empty param[submit.clientId]}"
+														requiredMessage="#{msg['mobile_number_req']}"
+														value="#{bean.customerName}"
+														onkeypress="return checkAlphaNumericSpace(event)"
+														disabled="#{bean.selectedcustomerMaster.id != null}">
+														<p:ajax update="cusName"></p:ajax>
+													</p:inputText>
+												</div>
+												<h:message for="cusName" id="dd"
+													class="validation-error-label" />
+												<p:tooltip for="cusName" rendered="true"
+													value="#{msg['mobile_number_req']}"></p:tooltip>
+											</div>
+										</div>
+
+
+									</p:outputPanel>
+								</p:outputPanel>
+								<div class="col-lg-3 col-md-3 col-sm-6">
+									<p:outputLabel value="Bill Date" />
+									<div class="form-group form-group_calend">
+										<p:calendar id="billDate" placeholder="dd-mmm-yyyy"
+											value="#{bean.billDate}" pattern="dd-MMM-yyyy"
+											disabled="true" navigator="true"
+											styleClass="form-control-1 calend-icon-1">
+											<p:ajax event="dateSelect" />
+										</p:calendar>
+										<h:message for="billDate" class="validation-error-label"
+											id="msg_billdate" style="margin-top:28px;" />
+									</div>
+								</div>
+
+								<div class="col-md-5">
+									<h:panelGrid columns="4" style="margin-bottom:25px"
+										cellpadding="10">
+										<p:selectOneRadio id="bt" value="#{bean.barcodeType}">
+											<f:selectItem itemLabel="WithOut BarCode"
+												itemValue="withoutbarcode" />
+											<f:selectItem itemLabel=" With BarCode"
+												itemValue="withbarcode" />
+											<p:ajax event="change" update="tableId growls"
+												listener="#{bean.updateBarCodeRadio}"></p:ajax>
+										</p:selectOneRadio>
+									</h:panelGrid>
+
+
+								</div>
+
+							</div>
+
+							<div class="text-right">
+								<p:commandButton update="growls tableId bill"
+									value="&#xea0e;;&nbsp;#{msg['add']}" title="#{msg['add']}"
+									class="btn bg-success heading-btn  font-iconmoon"
+									action="#{bean.creatRow}" onstart="PF('progressDlg').show()"
+									onsuccess="PF('progressDlg').hide()">
+
+								</p:commandButton>
+							</div>
+
+
+							<div class="row">
+								<div class="col-sm-12">
+									<div class="table-responsive m-b-10 footer-pad-0 p-t-10">
+										<p:dataTable value="#{bean.customerBillingDTOList}" var="item"
+											id="tableId" rowKey="{item.itemPricePk}" rowIndexVar="index"
+											scrollable="true" styleClass="report-table" editable="true"
+											editMode="cell" widgetVar="tableWdgr">
+
+											<p:ajax event="rowEdit" listener="#{bean.onRowEdit}"
+												update="growls,tableId" />
+											<p:ajax event="rowEditCancel" listener="#{bean.onRowCancel}"
+												update="growls,tableId" />
+
+											<p:column headerText="#" styleClass="text-center width-3">
+												<h:outputText value="#{index + 1 }" />
+											</p:column>
+
+											<p:column headerText="Bar Code" id="bs"
+												rendered="#{bean.barcodeType eq 'withbarcode'}"
+												styleClass="text-center width-5">
+												<p:selectBooleanCheckbox value="#{item.barcodebool}">
+													<p:ajax event="change" update="bs , tableId, growls" />
+												</p:selectBooleanCheckbox>
+
+											</p:column>
+											<p:column headerText="#{msg['item_code']} / #{msg['name']}"
+												styleClass="text-center width-8"
+												rendered="#{item.barcodebool}">
+												<p:inputText value="#{item.itemCodeName}" id="itemBarCode">
+													<p:ajax event="change" update="tableId,itemName , growls"
+														listener="#{bean.getItemBasedOnBarCode(item,index)}"></p:ajax>
+												</p:inputText>
+											</p:column>
+
+											<p:column headerText="#{msg['item_code']} / #{msg['name']}"
+												styleClass="text-center width-8"
+												rendered="#{!item.barcodebool}">
+												<p:autoComplete id="itemName" minQueryLength="1"
+													scrollHeight="250" converter="#{entityConverter}"
+													value="#{item.productVarietyMaster}" itemValue="#{itemm}"
+													var="itemm" itemLabel="#{itemm.displayName}"
+													completeMethod="#{bean.itemAutoSearch}" effect="fade">
+													<p:ajax event="itemSelect"
+														onclick="PF('progressDlg').show();"
+														oncomplete="PF('progressDlg').hide();"
+														update="tableId,itemName , growls"
+														listener="#{bean.ajaxItemSelect(item)}"></p:ajax>
+												</p:autoComplete>
+											</p:column>
+
+											<p:column headerText="#{msg['expiry_date']}"
+												styleClass="text-center width-6"
+												rendered="#{item.expiryDate != null}">
+												<h:selectOneMenu converter="#{entityConverter}"
+													value="#{item.expiryDate}" style="width:100%"
+													styleClass="form-control int-drop"
+													disabled="{item.itemId == null}">
+													<f:selectItem itemLabel="dd-mm-yy" itemValue="#{null}"
+														noSelectionOption="true" />
+													<f:selectItems value="#{bean.expire}" var="expiry"
+														itemLabel="#{expiry}" itemValue="#{expiry}">
+													</f:selectItems>
+													<f:convertDateTime pattern="dd-MMM-yyyy"
+														timeZone="#{loginBean.timeZone}" />
+												</h:selectOneMenu>
+											</p:column>
+
+											<ui:remove>
+												<p:column headerText="#{msg['hsn_code']}"
+													styleClass="text-center width-6">
+													<h:outputText value="#{item.hsnCode}" />
+												</p:column>
+											</ui:remove>
+											<p:column headerText="Total Stk Qnty"
+												styleClass="text-center width-5">
+												<h:outputText value="#{item.rateQTY}" />
+											</p:column>
+											<p:column headerText="Selling Rate"
+												styleClass="text-center width-5">
+												<h:outputText value="#{item.unitRate}" />
+											</p:column>
+											<ui:remove>
+												<p:column
+													headerText="#{msg['unit_rate']} &lt;br/&gt;(&#xf156;)"
+													styleClass="fa-input text-center width-5">
+													<p:cellEditor>
+														<f:facet name="output">
+															<h:outputText value="#{item.unitRate}"
+																styleClass="fa-input" />
+														</f:facet>
+														<f:facet name="input">
+															<h:selectOneMenu converter="#{entityConverter}"
+																value="#{item.unitRate}"
+																disabled="{item.itemId == null}">
+																<f:selectItem itemLabel="Select" itemValue="#{null}"
+																	noSelectionOption="true" />
+																<f:selectItems value="#{item.rateStockQty.keySet()}"
+																	var="unitRates" itemLabel="#{unitRates}"
+																	itemValue="#{unitRates}" />
+																<p:ajax event="change"
+																	onclick="PF('progressDlg').show();"
+																	oncomplete="PF('progressDlg').hide();"
+																	listener="#{bean.updateUnitRateWithGST(item)}"
+																	update="tableId ,srq , growls"></p:ajax>
+															</h:selectOneMenu>
+														</f:facet>
+													</p:cellEditor>
+												</p:column>
+
+												<p:column headerText="Purches Rate &lt;br/&gt;(&#xf156;)"
+													styleClass="fa-input text-right width-6">
+													<h:outputText value="#{item.bill_D_PurchasePrice}"
+														styleClass="fa-input" />
+												</p:column>
+
+												<p:column headerText="Rate S.Qnty" id="srq"
+													styleClass="width-5">
+													<h:outputText value="#{item.rateQTY}">
+													</h:outputText>
+												</p:column>
+											</ui:remove>
+											<p:column headerText="UOM" id="uom" styleClass="width-8">
+												<h:outputText value="#{item.uomName}">
+												</h:outputText>
+											</p:column>
+											<p:column headerText="Billed Qnty"
+												styleClass="text-center width-6">
+												<p:inputText styleClass="fa-input" id="orderedQtyInput"
+													disabled="{item.itemId == null}" value="#{item.billedQnty}">
+													<p:keyFilter regEx="/[0.0-9.0\s]/i"></p:keyFilter>
+													<p:ajax event="change" onclick="PF('progressDlg').show();"
+														oncomplete="PF('progressDlg').hide();"
+														listener="#{bean.updateUnitRateWithGST(item)}"
+														update="tableId  amount growls"></p:ajax>
+												</p:inputText>
+
+											</p:column>
+
+											<p:column
+												headerText="#{msg['total_rate']} &lt;br/&gt;(&#xf156;)"
+												styleClass="fa-input text-right width-7">
+												<h:outputText value="#{item.totalRate}"
+													styleClass="fa-input">
+													<f:convertNumber type="currency"></f:convertNumber>
+												</h:outputText>
+											</p:column>
+
+											<p:column headerText="CGST(%)"
+												styleClass="fa-input text-right width-6">
+
+												<p:inputText styleClass="fa-input" id="cgst"
+													value="#{item.cgstPercent}">
+													<p:keyFilter regEx="/[0.0-9.0\s]/i"></p:keyFilter>
+													<p:ajax event="change" onclick="PF('progressDlg').show();"
+														oncomplete="PF('progressDlg').hide();"
+														listener="#{bean.updateUnitRateWithGST(item)}"
+														update="tableId amount growls"></p:ajax>
+												</p:inputText>
+											</p:column>
+											<p:column headerText="CGST &lt;br/&gt;(&#xf156;)"
+												styleClass="fa-input text-right width-6">
+												<h:outputText value="#{item.cgstAmount}"
+													styleClass="fa-input">
+													<f:convertNumber type="currency"></f:convertNumber>
+												</h:outputText>
+
+
+											</p:column>
+											<p:column headerText="SGST(%)"
+												styleClass="fa-input text-right width-6">
+
+
+												<p:inputText styleClass="fa-input" id="sgst"
+													value="#{item.sgstPercent}">
+													<p:keyFilter regEx="/[0.0-9.0\s]/i"></p:keyFilter>
+													<p:ajax event="change" onclick="PF('progressDlg').show();"
+														oncomplete="PF('progressDlg').hide();"
+														listener="#{bean.updateUnitRateWithGST(item)}"
+														update="tableId amount growls"></p:ajax>
+												</p:inputText>
+											</p:column>
+											<p:column headerText="SGST &lt;br/&gt;(&#xf156;)"
+												styleClass="fa-input text-right width-6">
+												<h:outputText value="#{item.sgstAmount}"
+													styleClass="fa-input">
+													<f:convertNumber type="currency"></f:convertNumber>
+												</h:outputText>
+											</p:column>
+
+											<p:column headerText="Total GST Amount"
+												styleClass="text-center width-6">
+												<p:inputText styleClass="fa-input" id="totalgstamt"
+													value="#{item.totalgstamount}" disabled="true">
+													<p:keyFilter regEx="/[0.0-9.0\s]/i"></p:keyFilter>
+													<p:ajax event="change" onclick="PF('progressDlg').show();"
+														oncomplete="PF('progressDlg').hide();"
+														listener="#{bean.updateUnitRateWithGST(item)}"
+														update="tableId amount growls"></p:ajax>
+												</p:inputText>
+											</p:column>
+											<p:column
+												headerText="#{msg['dis_master']} &lt;br/&gt;(&#xf295;)"
+												styleClass="fa-input text-right width-6">
+												<p:inputText styleClass="fa-input" id="discountPercentInput"
+													disabled="{item.itemId == null}"
+													value="#{item.discountPercent}">
+													<p:keyFilter regEx="/[0.0-9.0\s]/i"></p:keyFilter>
+													<p:ajax event="change" onclick="PF('progressDlg').show();"
+														oncomplete="PF('progressDlg').hide();"
+														listener="#{bean.updatediscountper(item)}"
+														update="tableId amount growls">
+
+													</p:ajax>
+												</p:inputText>
+
+
+											</p:column>
+
+
+											<p:column headerText="Discount Amount"
+												styleClass="fa-input text-right width-6">
+												<p:inputText styleClass="fa-input" id="discountAmnt"
+													disabled="{item.itemId == null}"
+													value="#{item.bill_D_DiscountValue}">
+													<p:keyFilter regEx="/[0.0-9.0\s]/i"></p:keyFilter>
+													<p:ajax event="change" onclick="PF('progressDlg').show();"
+														oncomplete="PF('progressDlg').hide();"
+														listener="#{bean.updatediscountval(item)}"
+														update="tableId amount growls"></p:ajax>
+												</p:inputText>
+
+
+											</p:column>
+
+											<p:column
+												headerText="#{msg['nt_price']} &lt;br/&gt; (&#xf156;)"
+												styleClass="fa-input text-right width-8">
+												<h:outputText value="#{item.totalNetPrice}"
+													styleClass="fa-input">
+													<f:convertNumber type="currency"></f:convertNumber>
+												</h:outputText>
+											</p:column>
+
+											<p:column headerText="#{msg['action']}"
+												styleClass="width-6 text-center">
+												<p:commandButton value="&#xe99e;"
+													update="growls tableId amount"
+													class="btn bg-danger font-iconmoon btn-xs"
+													title="#{msg['delete']}" action="#{bean.removeItem(item)}"
+													onstart="PF('progressDlg').show()"
+													onsuccess="PF('progressDlg').hide()">
+												</p:commandButton>
+											</p:column>
+
+											<p:columnGroup type="footer">
+												<p:row>
+													<p:column colspan="6" styleClass="width-0"
+														footerText="Total Net Amount"
+														style="color: Black; font-size:30px" />
+													<p:column class="width-12"
+														footerText="#{bean.totalNetAmount}"
+														style="color: Black; font-size:30px" />
+												</p:row>
+											</p:columnGroup>
+										</p:dataTable>
+
+									</div>
+
+								</div>
+							</div>
+
+							<div class="fa-input row">
+								<div class="fa-input text-right">
+									<p:outputLabel class="fa-input" value="Recive Amount" />
+									<p:inputText styleClass="fa-input width-10" id="amount"
+										value="#{bean.reciveamnt}">
+										<p:keyFilter regEx="/[0.0-9.0\s]/i"></p:keyFilter>
+									</p:inputText>
+
+								</div>
+							</div>
+
+							<div class="fa-input row">
+								<div class="fa-input text-right">
+									<p:outputLabel class="fa-input" value="PaymentMode" />
+									<p:selectOneMenu id="console" value="#{bean.paymentmode}"
+										style="width:10%" styleClass="form-control int-drop">
+										<f:selectItem itemLabel="Cash" itemValue="Cash" />
+										<f:selectItem itemLabel="Online" itemValue="Online" />
+
+									</p:selectOneMenu>
+
+								</div>
+							</div>
+
+
+
+							<div class="fa-input text-right">
+
+								<p:commandButton update="growls tableId bill afterLoad"
+									value="&#xed6e;&nbsp;#{msg['print']}" title="#{msg['submit']}"
+									class="btn bg-success heading-btn  font-iconmoon"
+									action="#{bean.billPrint}" oncomplete="afterLoad()"
+									onstart="PF('progressDlg').show()"
+										onsuccess="PF('progressDlg').hide()">
+								</p:commandButton>
+								<h:panelGroup id="afterLoad">
+									<h:outputScript>
+		 function afterLoad() {   
+         
+<!--             alert("#{printTestBean.names}"); -->
+<!-- 				  window.print('Print Test'); -->
+           let divContents = #{customerBillingBean.content};
+           let str = divContents.replace(/nextLine/g,'<br></br>');
+           console.log(str); 
+          
+            let a = window.open('', '', 'height=700, width=700,margin=0px'); 
+            a.document.write('<html><head>'); 
+            a.document.write('');
+            a.document.write('</head>'); 
+            a.document.write('<body>');
+            a.document.write(str.fontsize(1));
+            a.document.write('</body></html>'); 
+            a.document.close(); 
+            a.print(); 
+         
+        }
+    </h:outputScript>
+								</h:panelGroup>
+
+
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<p:dialog widgetVar="statusMediaView" modal="false" draggable="true"
+			closable="true" resizable="false" showHeader="false" width="500"
+			height="400">
+			<p:outputPanel id="mediaViewPanel">
+				<p:overlayPanel>
+					<h3>PDF</h3>
+					<object type="application/pdf"
+						data="/resources/bin/main/invoiceFiles/in001.pdf?pfdrid_c=true"
+						width="100%" height="300px">
+						Your browser can't display pdf, <a
+							href="/bin/main/invoiceFiles/in001.pdf">click</a> to download pdf
+						instead.
+					</object>
+				</p:overlayPanel>
+				<p:commandButton value="Close"
+					onclick="PF('statusMediaView').hide();"></p:commandButton>
+			</p:outputPanel>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

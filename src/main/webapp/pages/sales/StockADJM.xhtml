@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/pages/template/layout.xhtml">
+	<ui:define name="content">
+		<h:form id="itemPNS">
+			<title>Orffosoft | Customer Billing</title>
+			<!-- Page Header -->
+			<div class="page-header page-header-default">
+				<div class="page-header-content">
+					<div class="page-title">
+						<h4>#{msg['stk_ad']}</h4>
+						<ul class="breadcrumb">
+							<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+									class="icon-home2 position-left"></i>#{msg['home']}</a></li>
+							<li class="active">#{msg['stk_ad']}</li>
+						</ul>
+						<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+					</div>
+					<ui:include src="/pages/pageHeadingElements.xhtml" />
+				</div>
+			</div>
+			<!-- End Page Header -->
+			<div class="content">
+				<div
+					class="panel-group panel-group-control panel-group-control-right m-b-15"
+					id="accordion-control-right">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h6 class="panel-title">
+								#{msg['stk_ad']}
+								<p:outputLabel styleClass="pull-right">
+									(<span class="mand-red">*</span>
+									<span>#{msg['mand_fields']}</span>)
+								</p:outputLabel>
+							</h6>
+						</div>
+						<div id="accordion-control-right-group1"
+							class="panel-collapse collapse in page-scroll-without-process">
+							<p:outputPanel id="panel1">
+
+								<div class="panel-body p-t-10">
+									<div class="label-form">
+										<div class="row custom-form-1">
+											<div class="col-lg-12 col-md-12 col-sm-12">
+												<div class="row">
+													<div class="col-lg-3 col-md-6 col-sm-6 ">
+														<p:outputLabel value="#{msg['item_name']}" />
+														<div class="input-group ui-outputlabel ui-widget">
+															<span class="input-group-addon"><i
+																class="icon-hash"></i></span>
+
+															<p:autoComplete id="itemName" minQueryLength="1"
+																styleClass="form-control" converter="#{entityConverter}"
+																value="#{stockAdjustmentBean.pvm}" itemValue="#{itemm}"
+																var="itemm" itemLabel="#{itemm.name}"
+																completeMethod="#{stockAdjustmentBean.itemAutocomplete}"
+																effect="fade">
+															</p:autoComplete>
+														</div>
+													</div>
+													<div class="col-lg-12 text-center ">
+														<div class="form-group">
+															<p:commandButton value="&#xe98e;&nbsp;#{msg['search']}"
+																id="search" title="#{msg['search']}"
+																actionListener="#{stockAdjustmentBean.generateReport}"
+																class="btn bg-info heading-btn  font-iconmoon"
+																onstart="PF('progressDlg').show()"
+																onsuccess="PF('progressDlg').hide()"
+																update="tableId growls">
+															</p:commandButton>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="table-responsive m-b-10 footer-pad-0 p-t-10">
+																<p:dataTable
+																	value="#{stockAdjustmentBean.stockAdjustmentDTOlist}"
+																	var="item" id="tableId" rowKey="{item.itemId}"
+																	rowIndexVar="index" scrollable="true"
+																	styleClass="report-table" editable="false"
+																	widgetVar="tableWdgr">
+																	<p:column headerText="#SNo"
+																		styleClass="text-center width-1">
+																		<h:outputText value="#{index +1 }" />
+																	</p:column>
+																	<p:column headerText="Item Name"
+																		styleClass="width-10 text-center">
+																		<h:outputText value="#{item.name}" />
+																	</p:column>
+																	<p:column headerText="Total Stock Qnt"
+																		styleClass="width-5 text-center">
+																		<h:outputText value="#{item.itemQty}" />
+																	</p:column>
+																	<p:column headerText="Item Price"
+																		styleClass="width-5 text-center">
+																		<h:selectOneMenu value="#{item.unitRate}"
+																			style="width:70%" styleClass="form-control int-drop">
+																			<f:selectItem itemLabel="Select" itemValue="#{null}"
+																				noSelectionOption="true" />
+																			<f:selectItems value="#{item.sellingPrices.keySet()}"
+																				var="unitRates" itemLabel="#{unitRates}"
+																				itemValue="#{unitRates}"></f:selectItems>
+																			<p:ajax update="tableId:rateWiseQnty"></p:ajax>
+																		</h:selectOneMenu>
+																	</p:column>
+																	<p:column headerText="Rate Wise Stock Qnt"
+																		styleClass="width-2 text-center">
+																		<h:outputText
+																			value="#{item.rateWiseQnty1.get(item.unitRate)}"
+																			id="rateWiseQnty" />
+																	</p:column>
+
+																	<ui:remove>
+																		<p:column headerText="Do you want to change price?"
+																			styleClass="width-2 text-center" id="itemprice">
+
+																			<p:selectBooleanButton
+																				value="#{stockAdjustmentBean.chngeprice}"
+																				onLabel="Yes" offLabel="No" style="width:5rem">
+																				<p:ajax event="change" update="itemprice tableId"
+																					listener="#{stockAdjustmentBean.updateAction(item)}" />
+																			</p:selectBooleanButton>
+
+																		</p:column>
+																	</ui:remove>
+
+																	<p:column headerText="Action"
+																		styleClass="width-10 text-center">
+																		<p:selectOneMenu id="console" value="#{item.action}"
+																			style="width:50%" styleClass="form-control int-drop">
+																			<f:selectItem itemLabel="Select One" itemValue="" />
+																			<f:selectItem itemLabel="DAMAGED" itemValue="DAMAGED" />
+																			<f:selectItem itemLabel="EXPIRED" itemValue="EXPIRED" />
+																			<f:selectItem itemLabel="STOCK_ADJUSTMENT_ADD"
+																				itemValue="STOCK_ADJUSTMENT_ADD" />
+																			<f:selectItem itemLabel="STOCK-ADJUSTMENT_MINUS"
+																				itemValue="STOCK-ADJUSTMENT_MINUS" />
+
+																		</p:selectOneMenu>
+																	</p:column>
+
+
+
+																	<p:column headerText="QTY"
+																		styleClass="width-5 text-center">
+																		<p:inputText id="orderedQtyInput"
+																			value="#{item.actionQty}" disabled="false"
+																			styleClass="fa-input" style="width:100%">
+																			<p:keyFilter regEx="/[0.0-9.0]/i"></p:keyFilter>
+																		</p:inputText>
+																	</p:column>
+
+																	<p:column headerText="PurchesPrice"
+																		styleClass="width-5"
+																		rendered="#{stockAdjustmentBean.chngeprice}">
+																		<p:inputText id="purchesprice"
+																			value="#{item.purchesprice}" disabled="false"
+																			styleClass="fa-input" style="width:100%">
+																			<p:keyFilter regEx="/[0.0-9.0]/i"></p:keyFilter>
+																		</p:inputText>
+																	</p:column>
+
+																	<p:column headerText="SellPrice" styleClass="width-5"
+																		rendered="#{stockAdjustmentBean.chngeprice}">
+																		<p:inputText id="sellprice"
+																			value="#{item.sellingprice}" disabled="false"
+																			styleClass="fa-input" style="width:100%">
+																			<p:keyFilter regEx="/[0.0-9.0]/i"></p:keyFilter>
+																		</p:inputText>
+																	</p:column>
+
+																</p:dataTable>
+															</div>
+														</div>
+													</div>
+													<div class="col-lg-12 text-right ">
+														<div class="form-group">
+															<p:commandButton value="&#xed6e;&nbsp;#{msg['submit']}"
+																title="#{msg['submit']}"
+																actionListener="#{stockAdjustmentBean.generatStockAdjustment}"
+																class="btn bg-info heading-btn  font-iconmoon"
+																onstart="PF('progressDlg').show()"
+																onsuccess="PF('progressDlg').hide()"
+																update="tableId search growls">
+															</p:commandButton>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</p:outputPanel>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

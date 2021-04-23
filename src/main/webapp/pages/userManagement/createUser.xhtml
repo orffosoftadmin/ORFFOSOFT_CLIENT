@@ -1,0 +1,488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	template="/pages/template/layout.xhtml">
+	<ui:define name="content">
+		<h:form id="usermanagementform">
+			<title>Orffosoft | User Create/Edit</title>
+			<style type="text/css">
+.ui-selectcheckboxmenu-panel {
+	width: 350px !important;
+}
+
+ul.ui-selectcheckboxmenu-multiple-container li.ui-selectcheckboxmenu-token
+	{
+	margin: 0 2px !important;
+	background: #455A64 !important;
+	border: 0px;
+	text-shadow: none;
+	font-weight: normal;
+}
+
+.ui-selectcheckboxmenu-multiple {
+	border-top-left-radius: 0px !important;
+	border-bottom-left-radius: 0px !important;
+}
+</style>
+
+
+			<div class="page-header page-header-default">
+				<div class="page-header-content">
+					<div class="page-title">
+						<h4>#{userManagementBean.action eq 'ADD' ? msg['create_user']
+							: msg['edit_user']}</h4>
+						<ul class="breadcrumb">
+							<ui:remove>
+								<!-- <li><i class="icon-home2 position-left"></i>
+							<p:commandLink action="#{userManagementBean.showList}"
+									immediate="true" value="#{msg['home']}">
+								</p:commandLink></li>
+							<li><p:commandLink action="#{userManagementBean.showList}"
+									immediate="true" value="User Management">
+								</p:commandLink></li> -->
+							</ui:remove>
+
+							<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+									class="icon-home2 position-left"></i>#{msg['home']}</a></li>
+							<li>#{msg['user_management']}</li>
+							<li class="active">#{userManagementBean.action eq 'ADD' ?
+								msg['create_user'] : msg['edit_user']}</li>
+						</ul>
+						<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+					</div>
+					<ui:include src="/pages/pageHeadingElements.xhtml" />
+				</div>
+			</div>
+
+			<div class="content page-scroll">
+				<div class="panel panel-info">
+					<div class="panel-heading">
+						<h6 class="panel-title">
+							#{msg['user']}<span class="pull-right text-13">(<span
+								class="text-danger">*</span> #{msg['marked_field_mandatory']})
+							</span>
+						</h6>
+					</div>
+
+					<div class="page-scroll">
+						<div class="panel-body p-t-10">
+							<h5 class="bord_bot m-t-0">
+								<span class="iform-title"><i class="fa fa-th-large m-r-5"></i>UserCreat
+									Page</span>
+							</h5>
+							<p:outputPanel id="main">
+								<p:outputPanel rendered="#{userManagementBean.action eq 'ADD'}">
+									<div class="row custom-form-1 label-form">
+										<div class="form-group">
+											<label class="col-md-3 control-label">Creat User : </label>
+
+											<div class="col-md-9">
+												<h:panelGrid columns="4" style="margin-bottom:25px"
+													cellpadding="10">
+													<p:selectOneRadio id="userType"
+														disabled="#{userManagementBean.roletype eq 'single_user' }"
+														value="#{userManagementBean.userType}">
+														<f:selectItem itemLabel="OWN SHOP" itemValue="WON_SHOP" />
+														<f:selectItem itemLabel="OTHER SHOP"
+															itemValue="OTHER_SHOP" />
+														<f:selectItem itemLabel="Creat New Shop"
+															itemValue="Creat_New_Shop" />
+														<p:ajax event="change"
+															update="userr userr1 mobnum role screenamee shopName1"></p:ajax>
+													</p:selectOneRadio>
+												</h:panelGrid>
+											</div>
+										</div>
+									</div>
+								</p:outputPanel>
+							</p:outputPanel>
+
+							<div class="row custom-form-1 label-form">
+								<div class="row custom-form-1 label-form">
+									<p:outputPanel id="userr1">
+										<p:outputPanel
+											rendered="#{userManagementBean.action eq 'ADD' and userManagementBean.userType eq 'OTHER_SHOP'}">
+											<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+												<div class="form-group ">
+													<p:outputLabel value="Shop Name" />
+													<div class="input-group">
+														<h:selectOneMenu id="shopName1"
+															converter="#{entityConverter}"
+															value="#{userManagementBean.entityMaster}"
+															scrollHeight="5" class="form-control">
+
+															<span class="input-group-addon"><i
+																class="icon-user-check"></i></span>
+															<f:selectItem itemLabel="#{msg['select']} "
+																itemValue="#{null}" noSelectionOption="true" />
+															<f:selectItems itemLabel="#{ent.name}" itemValue="#{ent}"
+																var="ent" value="#{userManagementBean.shopNamesList}" />
+															<p:ajax event="change" update="userr userr1"></p:ajax>
+														</h:selectOneMenu>
+													</div>
+												</div>
+											</div>
+
+										</p:outputPanel>
+									</p:outputPanel>
+								</div>
+
+								<p:outputPanel id="userr">
+									<p:outputPanel
+										rendered="#{userManagementBean.userType eq 'WON_SHOP' || userManagementBean.userType eq 'Creat_New_Shop' ||
+										(userManagementBean.userType eq 'OTHER_SHOP' and userManagementBean.entityMaster != null)}">
+										<div class="panel-body p-t-10">
+											<div class="row label-form">
+												<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+													<div class="form-group ">
+														<p:outputLabel value="#{msg['user_name']}" />
+														<span class="text-danger">*</span>
+														<div class="input-group">
+															<span class="input-group-addon"><i
+																class="icon-user"></i></span>
+															<p:inputText class="form-control fa-input" id="username"
+																minlength="3" maxlength="50"
+																value="#{userManagementBean.userMasterDTO.username}"
+																disabled="#{userManagementBean.action eq 'EDIT'}"
+																placeholder=" " tabindex="1" required="true"
+																requiredMessage="#{msg['user_name_req']}"
+																validatorMessage="UserName Should Have Charecter and Number.(Ex:Jitu123)">
+
+																<f:validateRegex pattern="^([a-zA-Z]+[0-9]+)$" />
+															</p:inputText>
+
+														</div>
+														<h:message for="username" class="validation-error-label" />
+														<p:focus for="username" />
+														<p:tooltip for="username"
+															value="#{msg['user_name_valid_msg']}" />
+													</div>
+												</div>
+												<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+													<div class="form-group">
+														<p:outputLabel value="#{msg['password']}" />
+														<span class="text-danger">*</span>
+														<div class="input-group">
+															<span class="input-group-addon"><i
+																class="icon-lock"></i></span>
+															<p:password class="form-control fa-input" id="password"
+																maxlength="50"
+																value="#{userManagementBean.userMasterDTO.password}"
+																autocomplete="off" placeholder=" " tabindex="2"
+																required="true" requiredMessage="#{msg['password_req']}"
+																validatorMessage="#{msg['password_valid_msg']}">
+
+															</p:password>
+														</div>
+														<h:message for="password" class="validation-error-label" />
+														<p:tooltip for="password"
+															value="#{msg['password_valid_msg']}" />
+													</div>
+												</div>
+												<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+													<div class="form-group">
+														<p:outputLabel value="#{msg['confirm_password']}" />
+														<span class="text-danger">*</span>
+														<div class="input-group">
+															<span class="input-group-addon"><i
+																class="icon-lock"></i></span>
+															<p:password class="form-control fa-input"
+																id="confirmpassword" maxlength="50"
+																value="#{userManagementBean.userMasterDTO.confirmPassword}"
+																autocomplete="off" placeholder=" " tabindex="3"
+																required="true"
+																requiredMessage="#{msg['confirm_password_req']}"
+																validatorMessage="#{msg['password_valid_msg']}">
+
+															</p:password>
+														</div>
+														<h:message for="confirmpassword"
+															class="validation-error-label" />
+														<p:tooltip for="confirmpassword"
+															value="#{msg['password_valid_msg']}" />
+													</div>
+												</div>
+
+												<p:outputPanel id="role">
+													<p:outputPanel
+														rendered="#{userManagementBean.userType eq 'WON_SHOP' || userManagementBean.userType eq 'OTHER_SHOP'}">
+														<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+															<div class="form-group ">
+																<p:outputLabel value="#{msg['role_name']}" />
+																<span class="text-danger">*</span>
+																<div class="input-group">
+																	<span class="input-group-addon"><i
+																		class="icon-user-check"></i></span>
+																	<p:selectOneMenu id="rolename"
+																		disabled="#{userManagementBean.action eq 'EDIT'}"
+																		styleClass="form-control int-drop"
+																		value="#{userManagementBean.userMasterDTO.userType}">
+																		<f:selectItem itemLabel="CASHIER" itemValue="Cashier"></f:selectItem>
+																		<f:selectItem itemLabel="ADMIN" itemValue="Admin"
+																			itemDisabled="#{userManagementBean.userType eq 'WON_SHOP' || userManagementBean.userType eq 'OTHER_SHOP'}"></f:selectItem>
+																		<p:ajax event="change" update="rolename"></p:ajax>
+																	</p:selectOneMenu>
+																</div>
+																<h:message id="rolenamemsg" for="rolename"
+																	class="validation-error-label" />
+																<p:focus for="rolename" />
+																<p:tooltip for="rolename"
+																	value="#{msg['role_name_valid_msg']}" />
+															</div>
+														</div>
+													</p:outputPanel>
+												</p:outputPanel>
+
+												<p:outputPanel id="mobnum">
+													<p:outputPanel
+														rendered="#{userManagementBean.userType eq 'Creat_New_Shop'}">
+														<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+															<div class="form-group ">
+																<p:outputLabel value="Mobile No" />
+																<span class="text-danger">*</span>
+																<div class="input-group">
+																	<span class="input-group-addon"><i
+																		class="icon-user"></i></span>
+																	<p:inputText class="form-control fa-input"
+																		id="mobnumber" minlength="10" maxlength="10"
+																		value="#{userManagementBean.userMasterDTO.mobileNumber}"
+																		placeholder="Mobile Number" tabindex="1"
+																		required="true"
+																		requiredMessage="Mobile Number is Required"
+																		validatorMessage="Enter 10 digit Mobile Number">
+																		<f:validateLength minimum="10" maximum="10" />
+																		<p:keyFilter regEx="/[0-9]/i"></p:keyFilter>
+																	</p:inputText>
+
+																</div>
+																<h:message for="mobnumber"
+																	class="validation-error-label" />
+																<p:focus for="mobnumber" />
+																<p:tooltip for="mobnumber"
+																	value="Enter 10 digit Mobile Number" />
+															</div>
+														</div>
+
+														<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+															<div class="form-group ">
+																<p:outputLabel value="Store Name" />
+																<span class="text-danger">*</span>
+																<div class="input-group">
+																	<span class="input-group-addon"><i
+																		class="icon-user"></i></span>
+																	<p:inputText class="form-control fa-input"
+																		id="storeName" minlength="5" maxlength="50"
+																		value="#{userManagementBean.userMasterDTO.storeName}"
+																		placeholder="Store Name" tabindex="1" required="true"
+																		requiredMessage="Store Name Required"
+																		validatorMessage="Enter Store Name ">
+
+																	</p:inputText>
+
+																</div>
+																<h:message for="storeName"
+																	class="validation-error-label" />
+																<p:focus for="storeName" />
+																<p:tooltip for="storeName"
+																	value="Enter Store Name Between 3-50" />
+															</div>
+														</div>
+
+														<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+															<div class="form-group ">
+																<p:outputLabel value="Store Code" />
+																<span class="text-danger">*</span>
+																<div class="input-group">
+																	<span class="input-group-addon"><i
+																		class="icon-user"></i></span>
+																	<p:inputText class="form-control fa-input"
+																		id="storeCode"
+																		value="#{userManagementBean.userMasterDTO.storeCode}"
+																		placeholder="Store Code" tabindex="1" required="true"
+																		requiredMessage="Store Code is Required">
+
+
+																	</p:inputText>
+
+																</div>
+																<h:message for="storeCode"
+																	class="validation-error-label" />
+																<p:focus for="storeCode" />
+																<p:tooltip for="storeCode"
+																	value="Enter Store code " />
+															</div>
+														</div>
+
+														<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+															<div class="form-group ">
+																<p:outputLabel value="Store Woner Name" />
+																<span class="text-danger">*</span>
+																<div class="input-group">
+																	<span class="input-group-addon"><i
+																		class="icon-user"></i></span>
+																	<p:inputText class="form-control fa-input"
+																		id="wonerName"
+																		value="#{userManagementBean.userMasterDTO.wonername}"
+																		placeholder="Woner Name" tabindex="1" required="true">
+
+																	</p:inputText>
+
+																</div>
+																<h:message for="wonerName"
+																	class="validation-error-label" />
+																<p:focus for="wonerName" />
+																<p:tooltip for="wonerName"
+																	value="Enter Store Name" />
+															</div>
+														</div>
+
+														<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+															<div class="form-group ">
+																<p:outputLabel value="Email ID" />
+																<span class="text-danger">*</span>
+																<div class="input-group">
+																	<span class="input-group-addon"><i
+																		class="icon-user"></i></span>
+																	<p:inputText class="form-control fa-input" id="emailid"
+																		minlength="4"
+																		value="#{userManagementBean.userMasterDTO.emailId}"
+																		placeholder="xyz@gmail.com" tabindex="1"
+																		required="true" requiredMessage="Gmail is Required"
+																		validatorMessage="#{msg['user_name_valid_msg']}">
+
+																	</p:inputText>
+
+																</div>
+																<h:message for="emailid" class="validation-error-label" />
+																<p:focus for="emailid" />
+																<p:tooltip for="emailid" value="xyz@gmail.com" />
+															</div>
+														</div>
+
+														<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+															<div class="form-group ">
+																<p:outputLabel value="Role Type" />
+																<span class="text-danger">*</span>
+																<div class="input-group">
+																	<span class="input-group-addon"><i
+																		class="icon-user-check"></i></span>
+																	<p:selectOneMenu id="roletype"
+																		styleClass="form-control int-drop"
+																		value="#{userManagementBean.userMasterDTO.userType}">
+																		<f:selectItem itemLabel="SUB ADMIN"
+																			itemValue="SubAdmin"></f:selectItem>
+																		<p:ajax event="change" update="roletype1"></p:ajax>
+																	</p:selectOneMenu>
+																</div>
+																<h:message id="roletype1" for="roletype"
+																	class="validation-error-label" />
+																<p:focus for="roletype" />
+																<p:tooltip for="roletype"
+																	value="#{msg['role_name_valid_msg']}" />
+															</div>
+														</div>
+
+													</p:outputPanel>
+												</p:outputPanel>
+											</div>
+
+
+											<p:outputPanel id="screenamee"
+												rendered="#{userManagementBean.hideStatusBar}">
+												<p:outputPanel
+													rendered="#{userManagementBean.userType eq 'WON_SHOP' || userManagementBean.userType eq 'OTHER_SHOP'}">
+													<div class="row">
+														<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+															<div class="form-group">
+																<p:outputLabel value="#{msg['status']}" />
+																<div class="input-group">
+																	<span class="input-group-addon"><i
+																		class="icon-file-check"></i></span>
+																	<h:selectOneMenu class="form-control"
+																		value="#{userManagementBean.userMasterDTO.status}"
+																		tabindex="4">
+																		<f:selectItem itemLabel="Select" itemDisabled="true" />
+																		<f:selectItem itemLabel="Active" itemValue="true" />
+																		<f:selectItem itemLabel="InActive" itemValue="false" />
+																	</h:selectOneMenu>
+																</div>
+															</div>
+														</div>
+													</div>
+												</p:outputPanel>
+											</p:outputPanel>
+										</div>
+									</p:outputPanel>
+								</p:outputPanel>
+							</div>
+
+							<div class="row">
+								<div class="col-lg-12 text-right">
+									<p:commandButton value="&#xed6a; #{msg['cancel']}"
+										title="#{msg['cancel']}"
+										styleClass="btn btn-sm bg-slate font-iconmoon"
+										action="#{userManagementBean.showList}" tabindex="8"
+										immediate="true" onclick="PF('progressDlg').show();"
+										oncomplete="PF('progressDlg').hide();" />
+
+									<p:commandButton value="&#xed6e; Submit" title="submit"
+										rendered="#{userManagementBean.action eq 'ADD'}"
+										action="#{userManagementBean.submit}"
+										onclick="PF('progressDlg').show();"
+										oncomplete="PF('progressDlg').hide();"
+										styleClass="btn btn-sm bg-success font-iconmoon m-l-8"
+										update="growls  userr" tabindex="9">
+										<f:setPropertyActionListener value="REGISTER_WITH_OLD_STORE"
+											target="#{userManagementBean.action}"></f:setPropertyActionListener>
+									</p:commandButton>
+									<p:commandButton value="&#xeda7; update"
+										rendered="#{userManagementBean.action eq 'EDIT'}"
+										title="update" action="#{userManagementBean.submit}"
+										onclick="PF('progressDlg').show();"
+										oncomplete="PF('progressDlg').hide();"
+										styleClass="btn btn-sm bg-success font-iconmoon m-l-8"
+										update="growls  userr" tabindex="9">
+										<f:setPropertyActionListener value="EDIT"
+											target="#{userManagementBean.action}"></f:setPropertyActionListener>
+									</p:commandButton>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+			<p:dialog header="#{msg['update_successfully']}" draggable="false"
+				modal="true" styleClass="p-0 overlay-pop modal-dialog"
+				closable="false" width="30%" widgetVar="forceLogoutDialog"
+				showEffect="fade" hideEffect="fade" resizable="false">
+
+				<div class="modal-body">
+					<h:outputText value="#{msg['user_details_updated_success']}" />
+				</div>
+
+				<div class="modal-footer m-t-10">
+					<p:commandButton ajax="false" title="#{msg['click_here_login']}"
+						styleClass="btn bg-success heading-btn font-iconmoon"
+						value="&#xed6e;&nbsp;#{msg['click_here_login']}"
+						action="#{userManagementBean.forceLogin}">
+					</p:commandButton>
+				</div>
+			</p:dialog>
+
+			<script type="text/javascript"
+				src="#{request.contextPath}/assets/js/plugins/forms/selects/bootstrap_multiselect.js"></script>
+			<script type="text/javascript"
+				src="#{request.contextPath}/assets/js/pages/form_multiselect.js"></script>
+		</h:form>
+	</ui:define>
+</ui:composition>

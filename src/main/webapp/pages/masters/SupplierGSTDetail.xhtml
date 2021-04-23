@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/pages/template/layout.xhtml">
+	<ui:define name="content">
+		<h:form id="billing">
+			<ui:param name="bean" value="#{supplierGSTdetailBean}"></ui:param>
+			<title>Orffosoft | Supplier Payment Detail</title>
+			<!-- Page Header -->
+			<div class="page-header page-header-default">
+				<div class="page-header-content">
+					<div class="page-title">
+						<h4>Supplier Payment Detail</h4>
+						<ul class="breadcrumb">
+							<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+									class="icon-home2 position-left"></i>#{msg['home']}</a></li>
+							<li>#{msg['oper']}</li>
+							<li class="active">Supplier Payment Detail</li>
+						</ul>
+						<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+					</div>
+					<ui:include src="/pages/pageHeadingElements.xhtml" />
+				</div>
+			</div>
+			<!-- End Page Header -->
+			<div class="content">
+				<div
+					class="panel-group panel-group-control panel-group-control-right m-b-15"
+					id="accordion-control-right">
+					<div class="panel panel-info ">
+						<div class="panel-heading">
+							<h6 class="panel-title">
+								Supplier Payment Detail
+								<p:outputLabel styleClass="pull-right">(
+									<span class="mand-red">*</span>
+									<span>#{msg['mand_fields']}</span>)
+								</p:outputLabel>
+							</h6>
+						</div>
+
+						<div class="page-scroll">
+							<div class="panel-body p-t-10">
+								<h5 class="bord_bot m-t-0">
+									<span class="iform-title"><i
+										class="fa fa-th-large m-r-5"></i>Supplier Payment Detail</span>
+								</h5>
+								<div class="row custom-form-1 label-form">
+									<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+										<div class="form-group">
+											<p:outputLabel class="fa-input" value="Supplier Name" />
+											<div class="input-group">
+												<span class="input-group-addon"><i class="icon-hash"></i></span>
+												<p:autoComplete id="supliername" minQueryLength="1"
+													styleClass="form-control" converter="#{entityConverter}"
+													value="#{bean.selectedSupplierMaster}" itemValue="#{itemm}"
+													var="itemm" itemLabel="#{itemm.name}"
+													completeMethod="#{bean.suplierAutoSearch}" effect="fade">
+													<p:ajax event="itemSelect" update="supliername growls"></p:ajax>
+												</p:autoComplete>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="row custom-form-1 label-form">
+
+										<div class="col-lg-3 col-md-3 col-sm-6">
+											<p:outputLabel value="From Date" />
+											<p:outputLabel rendered="true" class="mand-red" value="*"></p:outputLabel>
+											<div class="form-group form-group_calend">
+												<p:calendar id="fromDate" placeholder="dd-mmm-yyyy"
+													value="#{bean.suppliergstdetsildto.fromdate}"
+													pattern="dd-MMM-yyyy" navigator="true"
+													styleClass="form-control-1 calend-icon-1"
+													maxdate="new Date()">
+													<p:ajax event="dateSelect" update="toDate" />
+												</p:calendar>
+												<h:message for="fromDate" class="validation-error-label"
+													style="margin-top:28px;" />
+											</div>
+										</div>
+
+										<div class="col-lg-3 col-md-3 col-sm-6">
+											<p:outputLabel value="To Date" />
+											<p:outputLabel rendered="true" class="mand-red" value="*"></p:outputLabel>
+											<div class="form-group form-group_calend">
+												<p:calendar id="toDate" placeholder="dd-mmm-yyyy"
+													value="#{bean.suppliergstdetsildto.todate}"
+													pattern="dd-MMM-yyyy" navigator="true"
+													styleClass="form-control-1 calend-icon-1"
+													mindate="#{bean.suppliergstdetsildto.fromdate }"
+													maxdate="new Date()">
+													<p:ajax event="dateSelect" update="fromDate" />
+												</p:calendar>
+												<h:message for="toDate" class="validation-error-label"
+													style="margin-top:28px;" />
+											</div>
+										</div>
+
+										<div class="col-lg-12 col-md-12 col-sm-12 text-right">
+											<div class="form-group">
+
+												<p:commandButton
+													update="tableId, growls, supliername,fromDate,toDate"
+													value="&#xe916;&nbsp;#{msg['clear']}"
+													onstart="PF('progressDlg').show()"
+													onsuccess="PF('progressDlg').hide()"
+													title="#{msg['clear']}" actionListener="#{bean.cleardata}"
+													class="btn bg-slate font-iconmoon m-r-0">
+												</p:commandButton>
+
+												<p:commandButton update="growls tableId "
+													value="&#xe98e;&nbsp;#{msg['search']}"
+													title="#{msg['search']}" onstart="PF('progressDlg').show()"
+													onsuccess="PF('progressDlg').hide()"
+													actionListener="#{bean.generateReport}"
+													class="btn bg-info heading-btn  font-iconmoon">
+												</p:commandButton>
+												<ui:remove>
+													<p:commandButton id="DownloadAsExcel"
+														value="&#xe90e;&nbsp;DownloadAsExcel" title="Download"
+														disabled="#{bean.listMapForExcel==null}"
+														onstart="PF('progressDlg').show()"
+														onsuccess="PF('progressDlg').hide()"
+														actionListener="#{bean.excelDownload}" ajax="false"
+														class="btn bg-info heading-btn  font-iconmoon">
+														<p:fileDownload value="#{bean.file}" />
+													</p:commandButton>
+												</ui:remove>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="table-responsive m-b-10 footer-pad-0 p-t-10">
+												<p:dataTable id="tableId" var="item"
+													styleClass="report-table m-b-10" widgetVar="tableWdgr"
+													paginatorAlwaysVisible="false"
+													value="#{bean.listsuppliergstdetsildto}"
+													paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+													paginator="true" paginatorPosition="bottom"
+													rowsPerPageTemplate="5,10,15" rows="10" rowIndexVar="index"
+													emptyMessage="#{msg['no_records_found']}">
+
+
+													<p:column headerText="#SNo"
+														styleClass="text-center width-3">
+														<h:outputText value="#{index +1 }" />
+													</p:column>
+													<p:column headerText="Supplier Name" styleClass="width-10">
+														<h:outputText value="#{item.suppliername}" />
+													</p:column>
+													<p:column headerText="GST No" styleClass="width-10">
+														<h:outputText value="#{item.gstno}" />
+													</p:column>
+													<p:column headerText="Transaction Date"
+														styleClass="width-10">
+														<h:outputText value="#{item.transactiondate}">
+															<f:convertDateTime pattern="dd-MMM-yyyy"
+																timeZone="#{loginBean.timeZone}" />
+														</h:outputText>
+													</p:column>
+													<p:column headerText="GRN Amount w/o GST"
+														styleClass="width-10">
+														<h:outputText value="#{item.purchesamount}" />
+													</p:column>
+
+													<p:column headerText="GST(%)" styleClass="width-10">
+														<h:outputText
+															value="#{item.cgstpersentage + item.sgstpersentage}" />
+													</p:column>
+
+													<p:column headerText="GST Amount" styleClass="width-10">
+														<h:outputText value="#{item.cgstamt + item.sgstamt}" />
+													</p:column>
+													<p:column headerText="GRN Amount with GST"
+														styleClass="width-10">
+														<h:outputText value="#{item.netamount}" />
+													</p:column>
+													<p:column headerText="Action" styleClass="width-1">
+
+														<p:commandButton value="&#xea18;"
+															update="billing:billDetails  growls"
+															action="#{bean.viewBillDetails(item)}"
+															class="btn bg-info font-iconmoon btn-xs m-l-5"
+															oncomplete="PF('viewBillDetails').show();" />
+
+													</p:column>
+													<p:columnGroup type="footer">
+														<p:row>
+															<p:column class="width-10" />
+															<p:column class="width-10" />
+															<p:column class="width-10" />
+															<p:column class="width-10" />
+															<p:column class="width-10"
+																footerText="#{bean.withoutgstamount}" />
+															<p:column class="width-10" />
+															<p:column class="width-10" />
+
+															<p:column class="width-10"
+																footerText="#{bean.withgstamount}" />
+															<p:column class="width-10" />
+
+														</p:row>
+													</p:columnGroup>
+
+												</p:dataTable>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<p:dialog header="View Bill Details" id="billDetails"
+				widgetVar="viewBillDetails" position="center" width="80%"
+				resizable="false" modal="true" showEffect="fade" hideEffect="fade"
+				draggable="false" styleClass="cus-model-popup card_dialogbox p-0">
+
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="table-responsive">
+							<p:dataTable id="viewBill" var="item" class="table"
+								rowKey="#{item.itemname}" styleClass="report-table"
+								value="#{bean.viewbilldetaillist}" widgetVar="viewBillDial"
+								emptyMessage="#{msg['no_records_found']}" editable="true"
+								editMode="cell" tableStyleClass="table table-hover"
+								rowIndexVar="idx">
+								<p:column headerText="#" styleClass="text-center width-3">
+									<h:outputText value="#{idx+1}" />
+								</p:column>
+								<p:column headerText="Item Name" styleClass="width-10">
+									<h:outputText value="#{item.itemname}" />
+								</p:column>
+
+								<p:column headerText="OrderQnty" styleClass="width-8">
+									<h:outputText value="#{item.orderQnty}" />
+								</p:column>
+								<p:column headerText="AcceptQnty" styleClass="width-8">
+									<h:outputText value="#{item.accpetqnty}" />
+								</p:column>
+								<p:column headerText="Purches Price" styleClass="width-8">
+									<h:outputText value="#{item.purchesamount}" />
+								</p:column>
+								<p:column headerText="Selling Price" styleClass="width-8">
+									<h:outputText value="#{item.sellingamount}" />
+								</p:column>
+								<p:column headerText="Discount Amount" styleClass="width-8">
+									<h:outputText value="#{item.discounramount}" />
+								</p:column>
+
+								<p:column headerText="MRP" styleClass="width-8">
+									<h:outputText value="#{item.mrp}" />
+								</p:column>
+
+							</p:dataTable>
+						</div>
+
+
+					</div>
+				</div>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

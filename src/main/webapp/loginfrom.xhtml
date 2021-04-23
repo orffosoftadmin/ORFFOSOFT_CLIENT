@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+<h:head>
+<link href="assets/css/loginnfromm.css" rel="stylesheet"/>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description" content="Orffosoft" />
+	<meta name="author" content="Orffosoft" />
+	<link rel="shortcut icon" href="assets/images/favicon.jpg" />
+	<title>Orffosoft | Login</title>
+
+	
+<style>
+
+ .bggg { 
+ 	background-color:#ffffff;
+ 	background-repeat: no-repeat; 
+ 	background-size: 100% 100%; 
+ 	background-attachment: fixed; 
+ } 
+</style>
+
+</h:head>
+
+
+<body class="bggg">
+
+	<form class="box">
+
+		<img src="assets/images/orffosoft_tran.png" alt="Logo" />
+
+
+		<h3>Online Billing Software</h3>
+		<h1>#{msg['login']}</h1>
+
+		<div class="">
+			<p:inputText type="text" placeholder="User Name" class="user-name"
+				a:autofocus="true" id="username" value="#{loginBean.username}"
+				label="username" />
+			<p:message for="username" />
+			<div class="form-control-feedback">
+				<i class="icon-user text-muted"></i>
+			</div>
+		</div>
+
+		<div class="">
+			<p:password id="password" value="#{loginBean.password}"
+				autocomplete="off" placeholder="Password" class="user-name" />
+			<p:message for="password" />
+			<div class="form-control-feedback">
+				<i class="icon-lock2 text-muted"></i>
+			</div>
+		</div>
+
+		<div>
+			<p:commandButton class="botton-summit" id="sub" value="#{msg['login']}"
+				onclick="PF('progressDlg').show();"
+				oncomplete="PF('progressDlg').hide();" action="#{loginBean.submit}"
+				update="">
+				<f:setPropertyActionListener value="LOGIN"
+					target="#{loginBean.action}"></f:setPropertyActionListener>
+			</p:commandButton>
+		</div>
+	</form>
+
+
+
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false"
+		class="pre-loader">
+		<img src="#{request.contextPath}/assets/images/please-wait.gif" />
+	</p:dialog>
+</body>
+</html>

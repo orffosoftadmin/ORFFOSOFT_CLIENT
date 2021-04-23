@@ -1,0 +1,9 @@
+.trans {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+.login-frm {
+	border: 0;
+	background: none;
+	border-radius: 20px;
+}

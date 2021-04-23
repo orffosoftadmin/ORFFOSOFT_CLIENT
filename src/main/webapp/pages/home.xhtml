@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	template="/pages/template/layoutWithIndividualForm.xhtml">
+	<ui:define name="content">
+		<h:form id="dashboardform">
+			<ui:param name="dbDTO" value="#{dashboardBean.headerDTO}"></ui:param>
+			<style>
+.purchase-popup {
+	height: 530px;
+	overflow: auto;
+}
+</style>
+			<title>Orffosoft | Dashboard</title>
+			<!-- Page Header -->
+			<div class="page-header page-header-default">
+				<div class="page-header-content">
+					<div class="page-title">
+						<h4>#{msg['dashboard']}</h4>
+						<ul class="breadcrumb">
+							<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+									class="icon-home2 position-left"></i>#{msg['home']}</a></li>
+							<li class="active">#{msg['dashboard']}</li>
+						</ul>
+						<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+					</div>
+					<ui:include src="/pages/pageHeadingElements.xhtml" />
+				</div>
+			</div>
+			<!-- Page Header End -->
+
+
+			<!-- Page content -->
+			<div class="content page-scroll-hp no-padding-bottom">
+				<div class="panel panel-flat">
+					<div class="panel-body no-padding-bottom">
+						<p:outputPanel id="showroompnl">
+							<div class="row">
+								<div class="col-lg-8">
+									<div class="form-group">
+										<button type="button"
+											class="btn bg-brown-400 btn-labeled btn-rounded">
+											<b><i class="icon-reading"></i></b>
+											#{loginBean.entityMaster.code} /
+											#{loginBean.entityMaster.name}
+										</button>
+
+										<button type="button"
+											class="btn bg-brown-400 btn-labeled btn-rounded">
+											<b><i class="icon-reading"></i></b> Woner /
+											#{loginBean.entityMaster.shopwonername}
+										</button>
+									</div>
+								</div>
+								<div class="col-lg-8">
+									<div class="text-right">
+										<p:commandLink value="Refresh DashBoard"
+											class="btn bg-brown-400 btn-labeled btn-rounded"
+											styleClass="fa-input" immediate="true" ajax="false"
+											action="#{loginBean.getDashBoardDetail}">
+										</p:commandLink>
+									</div>
+
+								</div>
+							</div>
+							<p:outputPanel id="sale">
+								<div class="card-block feature-card-box"
+									style="border: 1px solid #ddd; margin-bottom: 20px;">
+									<div class="row">
+										<div class="col-sm-2 b-r-default text-center">
+											<i class="icon-arrow-right7" style="font-size: 32px"></i>
+											<h4>
+												Sales For The Day (
+												<h:outputText value="#{session.lastAccessedTime}">
+													<f:convertDateTime pattern="dd-MMM-yyyy" type="date" />
+												</h:outputText>
+												)
+											</h4>
+										</div>
+										<div class="col-sm-10 personal-profile m-t-10 dash-home">
+											<div class="row">
+
+												<div
+													class="col-lg-3 col-md-3 col-sm-6 col-xs-12 b-r-default text-center">
+													<div class="form-group">
+														<div class="feature-icon bg-primary">
+															<i class="icon-certificate"></i>
+														</div>
+														<h4 class="f-w-400 m-b-5 m-t-5">#{loginBean.loginResponseDTO.totalbill}
+														</h4>
+														<p class="text-muted f-15 m-b-0">#{msg['bill_completed']}</p>
+													</div>
+												</div>
+
+
+
+												<div
+													class="col-lg-3 col-md-3 col-sm-6 col-xs-12 b-r-default text-center">
+													<div class="form-group">
+														<div class="feature-icon bg-slate">
+															<i class="icon-cart5"></i>
+														</div>
+														<h4 class="f-w-400 m-b-5 m-t-5">
+															<i class="fa fa-inr"></i>
+															#{dashboardBean.formatDecimalNumber(loginBean.loginResponseDTO.totalSaleAmount
+															!= null ? loginBean.loginResponseDTO.totalSaleAmount :
+															0)}
+														</h4>
+														<p class="text-muted f-15 m-b-0">#{msg['sales_amount']}</p>
+													</div>
+												</div>
+
+
+
+												<div
+													class="col-lg-3 col-md-3 col-sm-6 col-xs-12 b-r-default text-center">
+													<div class="form-group">
+														<div class="feature-icon bg-slate">
+															<i class="icon-cart5"></i>
+														</div>
+														<h4 class="f-w-400 m-b-5 m-t-5">
+															<i class="fa fa-inr"></i>
+															#{dashboardBean.formatDecimalNumber(loginBean.loginResponseDTO.totalReturnAmt
+															!= null ? loginBean.loginResponseDTO.totalReturnAmt : 0)}
+														</h4>
+														<p class="text-muted f-15 m-b-0">Return Amount</p>
+													</div>
+												</div>
+												<ui:remove>
+
+													<div
+														class="col-lg-3 col-md-3 col-sm-6 col-xs-12 b-r-default text-center">
+														<div class="form-group">
+															<div class="feature-icon bg-slate">
+																<i class="icon-cart5"></i>
+															</div>
+															<h4 class="f-w-400 m-b-5 m-t-5">
+																<i class="fa fa-inr"></i>
+																#{dashboardBean.formatDecimalNumber(loginBean.loginResponseDTO.totalSaleAmount-loginBean.loginResponseDTO.totalReturnAmt)}
+
+															</h4>
+															<p class="text-muted f-15 m-b-0">Net Amount</p>
+														</div>
+													</div>
+												</ui:remove>
+
+
+												<ui:remove>
+													<div
+														class="col-lg-3 col-md-3 col-sm-6 col-xs-12 b-r-default text-center">
+														<div class="form-group">
+															<div class="feature-icon bg-brown">
+																<i class="icon-user-plus"></i>
+															</div>
+															<h4 class="f-w-400 m-b-5 m-t-5">Total
+																#{msg['new_customers']}</h4>
+															<p class="text-muted f-15 m-b-0">Upgrade To Premium
+																Account</p>
+														</div>
+													</div>
+												</ui:remove>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6">
+										<div class="panel panel-info" style="border: none">
+											<div class="panel-heading" style="margin: 0">
+												<h6 class="panel-title">
+													#{msg['top_5_fast_moving_pdt']} (#{msg['qty']}) Monthly
+													Wise<span class="pull-right"></span>
+												</h6>
+											</div>
+
+											<div class="panel-body p-0">
+												<div class="table-responsive">
+													<p:dataTable id="productquantbl" var="product"
+														rowIndexVar="index" styleClass="report-table" rows="5"
+														value="#{loginBean.listLoginResponseDTO}">
+														<p:column headerText="#" styleClass="text-center width-3">
+															<h:outputText value="#{index +1}" />
+														</p:column>
+														<p:column headerText="Top 5 Products Name ">
+															<div class="text-center">
+																<h:outputText value="#{product.itemname}" />
+															</div>
+														</p:column>
+														<p:column headerText=" Sold Qnty">
+															<div class="text-center">
+																<h:outputText value="#{product.soldAmt}" />
+															</div>
+														</p:column>
+
+													</p:dataTable>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-lg-6 ">
+										<div class="panel panel-info" style="border: none">
+											<div class="panel-heading" style="margin: 0">
+												<h6 class="panel-title">
+													Upcoming Expired Itemes <span class="pull-right"></span>
+												</h6>
+											</div>
+											<p:scrollPanel style="width:600px;height:200px">
+												<p:dataTable id="lll" var="productt" rowIndexVar="index"
+													styleClass="report-table" rows="5"
+													value="#{loginBean.expireditemlist}">
+													<p:column headerText="#" styleClass="text-center width-3">
+														<h:outputText value="#{index +1}" />
+													</p:column>
+													<p:column headerText="Item Name"
+														styleClass="text-center width-3">
+                                                      <h:outputText value="#{productt.itemname}" />
+													</p:column>
+													<p:column headerText="GRN Date"
+														styleClass="text-center width-3">
+                                                    <h:outputText value="#{productt.grndate}" >
+                                                    <f:convertDateTime pattern="dd-MMM-yyyy" type="date" />
+                                                    </h:outputText>
+													</p:column>
+													<p:column headerText="Expire Date"
+														styleClass="text-center width-3">
+                                                    <h:outputText value="#{productt.expireddate}" >
+                                                    <f:convertDateTime pattern="dd-MMM-yyyy" type="date" />
+                                                    </h:outputText>
+													</p:column>
+
+												</p:dataTable>
+											</p:scrollPanel>
+										</div>
+									</div>
+
+								</div>
+
+
+							</p:outputPanel>
+						</p:outputPanel>
+
+
+					</div>
+				</div>
+			</div>
+
+			<script type="text/javascript"
+				src="#{request.contextPath}/assets/js/loader.js"></script>
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/pages/template/layout.xhtml">
+	<ui:define name="content">
+		<ui:param name="bean" value="#{customerCreditNoteBean}"></ui:param>
+		<h:form id="varitylist">
+			<title>Orffosoft | Credit Note</title>
+			<div class="page-header page-header-default">
+				<div class="page-header-content">
+					<div class="page-title">
+						<h4>#{msg['credit_note_list']}</h4>
+						<ul class="breadcrumb">
+							<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+									class="icon-home2 position-left"></i>#{msg['home']}</a></li>
+							<li>#{msg['online_master_menu']}</li>
+							<li class="active">#{msg['credit_note_list']}</li>
+						</ul>
+						<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+					</div>
+					<ui:include src="/pages/pageHeadingElements.xhtml" />
+				</div>
+			</div>
+			<div class="content">
+				<div class="row">
+					<div class="col-lg-6">
+						<h6 class="panel-title">
+							<strong><h:panelGroup id="size">
+									<h:outputText value="#{bean.size}" />
+								</h:panelGroup></strong> - #{msg['credit_note']}(s)<a class="heading-elements-toggle"><i
+								class="icon-more"></i></a>
+						</h6>
+					</div>
+					<div class="col-lg-12 text-right">
+						<div class="form-group m-b-10">
+							<p:commandButton value="&#xea0e; #{msg['add']}" update="growls"
+								action="#{bean.loadAddPage}"
+								class="btn bg-success font-iconmoon m-r-0" title="#{msg['add']}"
+								id="addButton" onstart="PF('progressDlg').show()"
+								onsuccess="PF('progressDlg').hide()">
+								<f:setPropertyActionListener value="ADD" target="#{bean.action}"></f:setPropertyActionListener>
+							</p:commandButton>
+
+							<p:commandButton value="&#xea0e; Payment Recive" update="growls"
+								id="editButton" onstart="PF('progressDlg').show()"
+								onsuccess="PF('progressDlg').hide()"
+								class="btn bg-primary font-iconmoon" title="#{msg['edit']}"
+								action="#{bean.PaymentRecivePage}">
+								<f:setPropertyActionListener value="EDIT"
+									target="#{bean.action}"></f:setPropertyActionListener>
+							</p:commandButton>
+
+
+
+							<p:commandButton value="&#xea18; #{msg['view']}"
+								class="btn bg-info heading-btn  font-iconmoon"
+								title="#{msg['view']}" update="growls" id="viewButton"
+								onstart="PF('progressDlg').show()"
+								onsuccess="PF('progressDlg').hide()"
+								action="#{bean.loadViewPage}">
+								<f:setPropertyActionListener value="VIEW"
+									target="#{bean.action}"></f:setPropertyActionListener>
+							</p:commandButton>
+							<ui:remove>
+								<p:commandButton value="&#xea0e; Payment Recive" update="growls"
+									action="#{bean.loadEditPage}"
+									class="btn bg-success font-iconmoon m-r-0"
+									title="#{msg['add']}" id="paymentrecive"
+									onstart="PF('progressDlg').show()"
+									onsuccess="PF('progressDlg').hide()">
+									<f:setPropertyActionListener value="PaymentRecive"
+										target="#{bean.action}"></f:setPropertyActionListener>
+								</p:commandButton>
+
+
+								<p:commandButton value="&#xea0e; TopUp" update="growls"
+									action="#{bean.loadEditPage}"
+									class="btn bg-success font-iconmoon m-r-0" title="Add Amount"
+									id="addpayment" onstart="PF('progressDlg').show()"
+									onsuccess="PF('progressDlg').hide()">
+									<f:setPropertyActionListener value="AddPayment"
+										target="#{bean.action}"></f:setPropertyActionListener>
+								</p:commandButton>
+							</ui:remove>
+
+							<p:commandButton value="&#xe916; #{msg['clear']}" update="growls"
+								onstart="PF('progressDlg').show()"
+								onsuccess="PF('progressDlg').hide()" action="#{bean.clear}"
+								onclick="location.reload();" class="btn bg-slate font-iconmoon"
+								title="#{msg['clear']}">
+							</p:commandButton>
+
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-info ">
+					<div class="panel-body p-0">
+						<div class="table-responsive">
+							<p:outputPanel id="tablepanel">
+								<p:dataTable id="table" var="data" class="table"
+									widgetVar="table" tableStyleClass="" lazy="true"
+									selection="#{bean.selectedCustomerCreditNoteDTO}"
+									value="#{bean.customerCreditNoteDTOList}"
+									rowKey="#{data.cusHeaderCreditNotePk}"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									paginator="true" paginatorPosition="bottom"
+									rowsPerPageTemplate="5,10,15" rows="10" rowIndexVar="idx"
+									emptyMessage="#{msg['no_record_found']}">
+									<p:ajax event="rowSelectRadio" listener="#{bean.onRowSelect}"
+										update=":#{p:component('addButton')}" />
+									<p:ajax event="filter" oncomplete="updateFilterSelection()" />
+
+									<p:column headerText="#{msg['s_no']}"
+										styleClass="text-center width-3">
+										<h:outputText value="#{idx+1}" />
+									</p:column>
+
+
+
+									<p:column filterable="true" filterBy="#{data.customerName}"
+										styleClass="width-15" sortBy="#{data.customerName}"
+										filterMatchMode="contains" sortable="true"
+										headerText="Customer Name">
+										<h:outputText value="#{data.customerName}"></h:outputText>
+									</p:column>
+
+									<p:column filterable="true" filterBy="#{data.customerMobileNo}"
+										styleClass="width-10" sortBy="#{data.customerMobileNo}"
+										filterMatchMode="contains" sortable="true"
+										headerText="Customer Mob No">
+										<h:outputText value="#{data.customerMobileNo}"></h:outputText>
+									</p:column>
+
+									<p:column filterable="true"
+										filterBy="#{data.totalCreditAmount}" styleClass="width-12"
+										sortBy="#{data.totalCreditAmount}" filterMatchMode="contains"
+										sortable="true" headerText="Total Credited Amount">
+										<h:outputText style="color: Red; font-size:15px"
+											value="#{data.totalCreditAmount}"></h:outputText>
+									</p:column>
+									<ui:remove>
+										<p:column filterable="true" filterBy="#{data.totalPaidAmount}"
+											styleClass="width-10" sortBy="#{data.totalPaidAmount}"
+											filterMatchMode="contains" sortable="true"
+											headerText="Total Paid  Amount">
+											<h:outputText style="color: Green; font-size:15px"
+												value="#{data.totalPaidAmount}"></h:outputText>
+										</p:column>
+
+										<p:column filterable="true" filterBy="#{data.createdByStr}"
+											styleClass="width-10" sortBy="#{data.createdByStrs}"
+											filterMatchMode="contains" sortable="true"
+											headerText="Created By">
+											<h:outputText value="#{data.createdByStr}"></h:outputText>
+										</p:column>
+
+										<p:column headerText="#{msg['created_date']}"
+											filterBy="#{data.createdDate}"
+											styleClass="text-center form-group_calend width-11"
+											filterMatchMode="equals" sortBy="#{data.createdDate}"
+											sortable="true">
+											<f:facet name="filter">
+												<p:calendar onchange="PF('table').filter()" navigator="true"
+													id="planFrom" pattern="dd-MMM-yyyy"
+													placeholder="dd-mmm-yyyy" mask="true"
+													styleClass="form-control calend-icon text-center">
+													<p:ajax event="dateSelect"
+														oncomplete="PF('table').filter()" />
+												</p:calendar>
+											</f:facet>
+											<h:outputText value="#{data.createdDate}">
+												<f:convertDateTime pattern="dd-MMM-yyyy"
+													timeZone="#{loginBean.timeZone}" />
+											</h:outputText>
+										</p:column>
+									</ui:remove>
+
+									<p:column headerText="#{msg['select']}" selectionMode="single"
+										styleClass="width-4 text-center">
+									</p:column>
+
+								</p:dataTable>
+
+							</p:outputPanel>
+							<p:remoteCommand name="updateFilterSelection"
+								update=":#{p:component('size')}" autoRun="true" />
+						</div>
+					</div>
+				</div>
+				
+				<p:outputPanel id="panel1">
+								<div
+									class="panel-body p-t-10 p-b-10 page-scroll-without-process">
+
+									<div class="row view-style">
+									
+									<div class="col-lg-3 col-md-3 col-sm-3">
+											<div class="form-group">
+												<p:outputLabel value="Total Credit Amount" />
+												<h:outputText style="color: Red;font-size:15px"
+															value="#{bean.totalcreditamt}" class="" />
+											</div>
+										</div>
+										
+										<div class="col-lg-3 col-md-3 col-sm-3">
+											<div class="form-group">
+												<p:outputLabel value="Total Paid Amount" />
+												<h:outputText style="color: Green;font-size:15px"
+															value="#{bean.totalpaidamt}" class="" />
+											</div>
+										</div>
+										
+										
+										
+										<div class="col-lg-3 col-md-3 col-sm-3">
+											<div class="form-group">
+												<p:outputLabel value="Total Pending Amount" />
+												<h:outputText style="color: Red;font-size:15px"
+															value="#{bean.totalPendingamt}" class="" />
+											</div>
+										</div>
+										</div>
+										</div>
+										</p:outputPanel>
+				
+				
+			</div>
+			<p:dialog header="#{msg['confirmation_delete_title']}"
+				draggable="false" modal="true"
+				styleClass="p-0 overlay-pop modal-dialog" closable="true"
+				width="30%" widgetVar="dlg1" showEffect="fade" hideEffect="fade"
+				closeOnEscape="true" resizable="false">
+				<div class="modal-body">
+					<h:outputText value="#{msg['confirmation_delete']}" />
+				</div>
+				<div class="modal-footer m-t-10">
+					<p:commandButton value="&#xed6a;&nbsp;#{msg['no']}"
+						title="#{msg['no']}"
+						styleClass="btn bg-slate heading-btn font-iconmoon"
+						onclick="PF('dlg1').hide();" />
+					<p:commandButton ajax="false"
+						styleClass="btn bg-success heading-btn font-iconmoon"
+						value="&#xed6e;&nbsp;#{msg['yes']}" title="#{msg['yes']}"
+						action="#{bean.confirmDelete}" onclick="PF('dlg1').hide();">
+					</p:commandButton>
+				</div>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

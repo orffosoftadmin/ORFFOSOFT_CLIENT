@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	template="/pages/template/layout.xhtml">
+	<ui:define name="content">
+		<ui:param name="bean" value="#{directBillingBean}"></ui:param>
+		<title>Orffosoft | Create Bill</title>
+		<!-- Page Header -->
+		<div class="page-header page-header-default">
+			<div class="page-header-content">
+				<div class="page-title">
+					<h4>#{bean.action eq 'ADD' ? msg['create_bill'] :
+						msg['edit_bill']}</h4>
+					<ul class="breadcrumb">
+						<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+								class="icon-home2 position-left"></i>#{msg['home']}</a></li>
+						<li>#{msg['online_master_menu']}</li>
+						<li class="active">#{bean.action eq 'ADD' ?
+							msg['create_bill'] : msg['edit_bill']}</li>
+					</ul>
+					<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+				</div>
+				<ui:include src="/pages/pageHeadingElements.xhtml" />
+			</div>
+		</div>
+		<!-- Page Header End -->
+		<div class="content ">
+			<div class="panel ">
+				<div class="panel-heading bg-info">
+					<h6 class="panel-title">
+						Direct Bill <span class="pull-right text13"> (<span
+							class="text-danger">*</span> #{msg['mand_fields']})
+						</span>
+					</h6>
+				</div>
+
+				<div class="panel-body page-scroll-without-process p-t-10">
+					<h5 class="bord_bot m-t-0">
+						<span class="iform-title"><i class="fa fa-th-large m-r-5"></i>#{msg['general']}</span>
+					</h5>
+					<div class="row label-form ">
+						<p:outputPanel id="bill">
+							<div class="col-md-3">
+								<div class="form-group">
+									<p:outputLabel class="fa-input" value="Mobile Number" />
+									<div class="input-group">
+										<span class="input-group-addon"><i class="icon-tree6"></i></span>
+										<!-- 									<p:inputText id="mob" class="form-control" -->
+										<!-- 										value="#{bean.mobileNumber}"> -->
+										<!-- 									</p:inputText> -->
+
+										<p:autoComplete id="mob" minQueryLength="1"
+											placeholder="Enter At Least 2 Digit" maxlength="10"
+											styleClass="form-control" converter="#{entityConverter}"
+											value="#{bean.selectedcustomerMaster}" itemValue="#{pro}"
+											var="pro" itemLabel="#{pro.primaryContactNumber}"
+											completeMethod="#{bean.mobileAutocomplete}"
+											onstart="PF('progressDlg').show()"
+											onsuccess="PF('progressDlg').hide()" effect="fade">
+
+											<p:ajax event="itemSelect" update="bill mob"
+												listener="#{bean.updateMobileNumber}"></p:ajax>
+										</p:autoComplete>
+										<p:keyFilter for="mob" regEx="/[0-9\s]/i"></p:keyFilter>
+
+
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group">
+									<p:outputLabel class="fa-input" value="Customer Name" />
+									<div class="input-group">
+										<span class="input-group-addon"><i class="icon-hash"></i></span>
+										<p:inputText id="cusname" class="form-control"
+											value="#{bean.customerName}"
+											disabled="#{bean.selectedcustomerMaster.id != null}">
+										</p:inputText>
+									</div>
+								</div>
+							</div>
+						</p:outputPanel>
+					</div>
+					<h5 class="bord_bot m-t-0">
+						<span class="iform-title"><i class="fa fa-th-large m-r-5"></i>Product
+							Infomation</span>
+					</h5>
+					<div class="row label-form ">
+						<div class="col-md-3">
+							<div class="form-group">
+								<p:outputLabel class="fa-input" value="Item Name Or Code" />
+								<div class="input-group">
+									<span class="input-group-addon"><i class="icon-hash"></i></span>
+									<p:autoComplete id="itemName1" minQueryLength="1"
+										styleClass="form-control" converter="#{entityConverter}"
+										value="#{bean.productVarietyMaster}" itemValue="#{itemm}"
+										var="itemm" itemLabel="#{itemm.name}"
+										completeMethod="#{bean.itemAutoSearch}" effect="fade">
+										<p:ajax event="itemSelect" update="itemName1, growls"></p:ajax>
+									</p:autoComplete>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="form-group">
+								<p:outputLabel class="fa-input" value="Unit Rate" />
+								<div class="input-group">
+									<span class="input-group-addon"><i class="icon-tree6"></i></span>
+									<p:inputText id="untRate" class="form-control"
+										value="#{bean.directBillingDTO.sellingPrice}">
+										<p:keyFilter regEx="/[0.0-9.0\s]/i"></p:keyFilter>
+									</p:inputText>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="form-group">
+								<p:outputLabel class="fa-input" value="Billed Qnty" />
+								<div class="input-group">
+									<span class="input-group-addon"><i class="icon-tree6"></i></span>
+									<p:inputText id="bildQnty" class="form-control"
+										value="#{bean.directBillingDTO.billedQnty}">
+										<p:keyFilter regEx="/[0.0-9.0\s]/i"></p:keyFilter>
+									</p:inputText>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-3">
+							<div class="form-group">
+								<p:outputLabel class="fa-input" value="Discount Amount" />
+								<div class="input-group">
+									<span class="input-group-addon"><i class="icon-tree6"></i></span>
+									<p:inputText id="disAmt" class="form-control"
+										value="#{bean.directBillingDTO.discountAmt}">
+										<p:keyFilter regEx="/[0.0-9.0\s]/i"></p:keyFilter>
+									</p:inputText>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="text-right">
+						<p:commandButton
+							update="growls itemList itemName1  untRate  bildQnty  disAmt"
+							value="&#xea0e;;&nbsp;#{msg['add']}" title="#{msg['submit']}"
+							class="btn bg-success heading-btn  font-iconmoon"
+							action="#{bean.creatRow}" onstart="PF('progressDlg').show()"
+							onsuccess="PF('progressDlg').hide()">
+
+						</p:commandButton>
+					</div>
+
+
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="table-responsive m-b-10 footer-pad-0 p-t-10">
+								<p:dataTable value="#{bean.directBillingDTOList}" var="item"
+									id="itemList" rowIndexVar="index"
+									rowKey="{item.productVarietyId}" scrollable="true"
+									styleClass="report-table" editable="true" widgetVar="tableWdgr"
+									editMode="cell"
+									scrollHeight="#{bean.directBillingDTOList.size() eq 0 ? '34' : 
+							  				 bean.directBillingDTOList.size() eq 1 ? '38': 
+							  				 bean.directBillingDTOList.size() eq 2 ? '75':
+											 bean.directBillingDTOList.size() eq 3 ? '112':
+											 bean.directBillingDTOList.size() eq 4 ? '149':
+											 bean.directBillingDTOList.size() gt 4 and bean.directBillingDTOList.size() lt 6 ? '186' :'205'}">
+
+									<p:ajax event="rowEdit" listener="#{bean.onRowEdit}"
+										update="growls,itemList" />
+									<p:ajax event="rowEditCancel" listener="#{bean.onRowCancel}"
+										update="growls,itemList" />
+
+									<p:column headerText="#" styleClass="text-center width-3">
+										<h:outputText value="#{index +1 }" />
+									</p:column>
+
+									<p:column headerText="#{msg['item_code']} / #{msg['name']}"
+										styleClass="width-10">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{item.itemName}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:autoComplete id="itemName" minQueryLength="1"
+													styleClass="form-control" converter="#{entityConverter}"
+													value="#{bean.productVarietyMaster}" itemValue="#{itemm}"
+													var="itemm" itemLabel="#{itemm.name}"
+													completeMethod="#{bean.itemAutoSearch}" effect="fade">
+													<p:ajax event="itemSelect"
+														update="itemList ,itemName , growls"
+														listener="#{bean.ajaxItemSelect(item)}"></p:ajax>
+												</p:autoComplete>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<p:column
+										headerText="#{msg['unit_rate']} &lt;br/&gt;(&#xf156;)"
+										styleClass="fa-input text-right width-9">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{item.sellingPrice}"
+													styleClass="fa-input" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText styleClass="fa-input" id="unitRateInput"
+													value="#{item.sellingPrice}" style="width:100%">
+													<p:ajax event="change" onclick="PF('progressDlg').show();"
+														oncomplete="PF('progressDlg').hide();"
+														listener="#{bean.updateUnitRateWithGST(item)}"
+														update="itemList growls"></p:ajax>
+												</p:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+
+									<p:column headerText="Billed Qnty" styleClass="width-5">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:inputText value="#{item.billedQnty}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText styleClass="fa-input" id="orderedQtyInput"
+													disabled="{item.itemId == null}" value="#{item.billedQnty}"
+													style="width:100%">
+													<p:ajax event="change" onclick="PF('progressDlg').show();"
+														oncomplete="PF('progressDlg').hide();"
+														listener="#{bean.updateUnitRateWithGST(item)}"
+														update="itemList growls"></p:ajax>
+												</p:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+
+									<p:column
+										headerText="#{msg['dis_master']} &lt;br/&gt; (&#xf156;)"
+										styleClass="fa-input text-right width-7">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{item.discountAmt}"
+													styleClass="fa-input" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText styleClass="fa-input" id="discountAmtInput"
+													value="#{item.discountAmt}" style="width:100%">
+													<p:ajax event="change" onclick="PF('progressDlg').show();"
+														oncomplete="PF('progressDlg').hide();"
+														listener="#{bean.updateUnitRateWithGST(item)}"
+														update="itemList growls"></p:ajax>
+												</p:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+
+									<p:column headerText="Total NetPrice &lt;br/&gt;(&#xf156;)"
+										styleClass="fa-input text-right width-10">
+										<h:outputText value="#{item.totalNetPrice}"
+											styleClass="fa-input">
+											<f:convertNumber type="currency"></f:convertNumber>
+										</h:outputText>
+									</p:column>
+									<p:column headerText="#{msg['action']}"
+										styleClass="width-6 text-center">
+										<p:commandButton value="&#xe99e;" update="growls,itemList"
+											class="btn bg-danger font-iconmoon btn-xs"
+											title="#{msg['delete']}" action="#{bean.removeItem(item)}"
+											onstart="PF('progressDlg').show()"
+											onsuccess="PF('progressDlg').hide()">
+										</p:commandButton>
+									</p:column>
+
+									<p:columnGroup type="footer">
+										<p:row>
+											<p:column colspan="5" styleClass="width-38"
+												footerText="#{msg['tot']}" />
+
+											<p:column class="width-8" footerText="#{bean.totalnetamount}" />
+
+											<p:column class="width-6" footerText="" />
+
+
+										</p:row>
+									</p:columnGroup>
+								</p:dataTable>
+							</div>
+						</div>
+					</div>
+					<div class="text-right">
+						<p:commandButton update=" growls itemList cusname mob growls afterLoad"
+							value="&#xed6e;&nbsp;#{msg['print']}" title="#{msg['submit']}"
+							class="btn bg-success heading-btn  font-iconmoon"
+							action="#{bean.billPrint}" oncomplete="afterLoad()"
+							onstart="PF('progressDlg').show()"
+							onsuccess="PF('progressDlg').hide()">
+						</p:commandButton>
+						<h:panelGroup id="afterLoad">
+							<h:outputScript>
+		
+         function afterLoad() {   
+         
+<!--             alert("#{printTestBean.names}"); -->
+								<!--             window.print('Print Test'); -->
+           var divContents = #{directBillingBean.content};
+           console.log(divContents);
+           var str = divContents.replace(/nextLine/g,'<br></br>');
+           console.log(str);
+
+            var a = window.open('', '', 'height=700, width=700,margin=0px'); 
+            a.document.write('<html><head>'); 
+            a.document.write('');
+             a.document.write('</head>'); 
+            a.document.write('<body>');
+             a.document.write(str.small());
+              a.document.write('</body></html>'); 
+            a.document.close(); 
+            a.print(); 
+
+        }
+    </h:outputScript>
+						</h:panelGroup>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

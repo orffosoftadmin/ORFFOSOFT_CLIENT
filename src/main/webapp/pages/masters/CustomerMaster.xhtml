@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/pages/template/layout.xhtml">
+	<ui:define name="content">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{loginBean.checkPrivilege('ITEM_MASTER_LIST')}" />
+		</f:metadata>
+		<h:form id="varitylist">
+			<f:metadata>
+				<f:viewAction action="#{productVarietyMasterBean.onPageLoad}"
+					onPostBack="true" />
+			</f:metadata>
+			<title>Orffosoft | Customer Master List</title>
+			<div class="page-header page-header-default">
+				<div class="page-header-content">
+					<div class="page-title">
+						<h4>Customer Master List</h4>
+						<ul class="breadcrumb">
+							<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+									class="icon-home2 position-left"></i>#{msg['home']}</a></li>
+							<li>#{msg['online_master_menu']}</li>
+							<li class="active">Customer Master List</li>
+						</ul>
+						<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+					</div>
+					<ui:include src="/pages/pageHeadingElements.xhtml" />
+				</div>
+			</div>
+			<div class="content">
+				<div class="row">
+					<div class="col-lg-6">
+						<h6 class="panel-title">
+							<strong><h:panelGroup id="size">
+									<h:outputText value="#{customerMasterBean.size}" />
+								</h:panelGroup></strong> - custmer(s)<a class="heading-elements-toggle"><i
+								class="icon-more"></i></a>
+						</h6>
+					</div>
+					<div class="col-lg-6 text-right">
+						<div class="form-group m-b-10">
+
+							<p:commandButton value="&#xea0e; #{msg['add']}" update="growls"
+								action="#{customerMasterBean.addpage}"
+								class="btn bg-success font-iconmoon m-r-0" title="#{msg['add']}"
+								id="addButton" onstart="PF('progressDlg').show()"
+								onsuccess="PF('progressDlg').hide()">
+
+							</p:commandButton>
+
+
+							<p:commandButton value="&#xe912; #{msg['edit']}" update="growls"
+								id="editButton" onstart="PF('progressDlg').show()"
+								onsuccess="PF('progressDlg').hide()"
+								class="btn bg-primary font-iconmoon" title="#{msg['edit']}"
+								action="#{customerMasterBean.editpage}">
+
+							</p:commandButton>
+
+							<p:commandButton value="&#xea18; #{msg['view']}"
+								class="btn bg-info heading-btn  font-iconmoon"
+								title="#{msg['view']}" update="growls" id="viewButton"
+								onstart="PF('progressDlg').show()"
+								onsuccess="PF('progressDlg').hide()"
+								action="#{customerMasterBean.viewpage}">
+
+							</p:commandButton>
+							<p:commandButton value="&#xe916; #{msg['clear']}" update="growls"
+								onstart="PF('progressDlg').show()"
+								onsuccess="PF('progressDlg').hide()"
+								action="#{customerMasterBean.clear}"
+								onclick="location.reload();" class="btn bg-slate font-iconmoon"
+								title="#{msg['clear']}">
+							</p:commandButton>
+
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-info ">
+					<div class="panel-body p-0">
+						<div class="table-responsive">
+							<p:outputPanel id="tablepanel">
+								<p:dataTable id="table" var="data" class="table"
+									widgetVar="table" lazy="true"
+									selection="#{customerMasterBean.customerMaster}"
+									value="#{customerMasterBean.customerMasterList}"
+									rowKey="#{data.id}"
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									paginator="true" paginatorPosition="bottom"
+									rowsPerPageTemplate="5,10,15" rows="10" rowIndexVar="idx"
+									emptyMessage="#{msg['no_record_found']}">
+									<p:ajax event="rowSelectRadio" />
+									<p:ajax event="filter" oncomplete="updateFilterSelection()" />
+									<p:column headerText="#{msg['s_no']}"
+										styleClass="text-center width-3">
+										<h:outputText value="#{idx+1}" />
+									</p:column>
+
+
+
+									<p:column filterable="true" filterBy="#{data.name}"
+										styleClass="width-17" sortBy="#{data.name}"
+										filterMatchMode="contains" sortable="true"
+										headerText="Customer Name">
+										<h:outputText value="#{data.name}"></h:outputText>
+									</p:column>
+
+									<p:column filterable="true"
+										filterBy="#{data.primaryContactNumber}" styleClass="width-17"
+										sortBy="#{data.primaryContactNumber}"
+										filterMatchMode="contains" sortable="true"
+										headerText="Customer Number">
+										<h:outputText value="#{data.primaryContactNumber}"></h:outputText>
+									</p:column>
+
+									<ui:remove>
+										<p:column headerText="#{msg['created_date']}"
+											filterBy="#{data.registrationDate}"
+											styleClass="text-center form-group_calend width-11"
+											filterMatchMode="equals" sortBy="#{data.registrationDate}"
+											sortable="true">
+											<f:facet name="filter">
+												<p:calendar onchange="PF('table').filter()" navigator="true"
+													id="planFrom" pattern="dd-MMM-yyyy"
+													placeholder="dd-mmm-yyyy" mask="true"
+													styleClass="form-control calend-icon text-center">
+													<p:ajax event="dateSelect"
+														oncomplete="PF('table').filter()" />
+												</p:calendar>
+											</f:facet>
+											<h:outputText value="#{data.registrationDate}">
+												<f:convertDateTime pattern="dd-MMM-yyyy"
+													timeZone="#{loginBean.timeZone}" />
+											</h:outputText>
+										</p:column>
+
+
+										<p:column headerText="#{msg['modify_date']}"
+											filterBy="#{data.modifiedDate}"
+											styleClass="text-center form-group_calend width-11"
+											filterMatchMode="equals" sortBy="#{data.modifyDate}"
+											sortable="true">
+											<f:facet name="filter">
+												<p:calendar onchange="PF('table').filter()" navigator="true"
+													id="modifyDate" pattern="dd-MMM-yyyy"
+													placeholder="dd-mmm-yyyy" mask="true"
+													styleClass="form-control calend-icon text-center">
+													<p:ajax event="dateSelect"
+														oncomplete="PF('table').filter()" />
+												</p:calendar>
+											</f:facet>
+											<h:outputText value="#{data.modifyDate}">
+												<f:convertDateTime pattern="dd-MMM-yyyy"
+													timeZone="#{loginBean.timeZone}" />
+											</h:outputText>
+										</p:column>
+									</ui:remove>
+									<p:column headerText="#{msg['select']}" selectionMode="single"
+										styleClass="width-4 text-center">
+									</p:column>
+
+								</p:dataTable>
+
+							</p:outputPanel>
+							<p:remoteCommand name="updateFilterSelection"
+								update=":#{p:component('size')}" autoRun="true" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<p:dialog header="#{msg['confirmation_delete_title']}"
+				draggable="false" modal="true"
+				styleClass="p-0 overlay-pop modal-dialog" closable="true"
+				width="30%" widgetVar="dlg1" showEffect="fade" hideEffect="fade"
+				closeOnEscape="true" resizable="false">
+				<div class="modal-body">
+					<h:outputText value="#{msg['confirmation_delete']}" />
+				</div>
+				<div class="modal-footer m-t-10">
+					<p:commandButton value="&#xed6a;&nbsp;#{msg['no']}"
+						title="#{msg['no']}"
+						styleClass="btn bg-slate heading-btn font-iconmoon"
+						onclick="PF('dlg1').hide();" />
+					<p:commandButton ajax="false"
+						styleClass="btn bg-success heading-btn font-iconmoon"
+						value="&#xed6e;&nbsp;#{msg['yes']}" title="#{msg['yes']}"
+						action="#{productVarietyMasterBean.confirmDelete}"
+						onclick="PF('dlg1').hide();">
+					</p:commandButton>
+				</div>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,32 @@
+
+
+.box {
+	width: 300px;
+	padding: 40px;
+	position: static;
+    margin: 10px auto 20px auto;
+	background: rgba(0, 0, 0, 0.1);
+	text-align: center;
+}
+
+.user-name {
+	background: rgba(0, 0, 0, 0.1);
+	display:block;
+	text-align: center;
+	border: 5px;
+	color: White;
+	font-style: oblique;
+	text-transform:inherit;
+	border-radius: 20px;
+	margin: 20px auto;
+	padding: 5px 5px;
+	
+}
+
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color:  rgba(0, 0, 0, 0.1);;
+ font-size:15px;
+ font-style: italic;
+}
+

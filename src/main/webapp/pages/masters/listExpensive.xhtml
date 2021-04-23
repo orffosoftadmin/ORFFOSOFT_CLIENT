@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/pages/template/layout.xhtml">
+	<ui:define name="content">
+	<ui:param name="bean" value="#{expensivebean}"></ui:param>
+		<h:form>
+			<title>Orffosoft | Expensive</title>
+			<!-- Page Header -->
+			<div class="page-header page-header-default">
+				<div class="page-header-content">
+					<div class="page-title">
+						<h4>Expensive</h4>
+						<ul class="breadcrumb">
+							<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+									class="icon-home2 position-left"></i>#{msg['home']}</a></li>
+							<li class="active">Expensive</li>
+						</ul>
+						<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+					</div>
+					<ui:include src="/pages/pageHeadingElements.xhtml" />
+				</div>
+			</div>
+			<!-- End Page Header -->
+			<div class="content">
+				<div class="row">
+					<div class="col-lg-6 col-sm-4 col-xs-12 m-t-5">
+						<h6 class="panel-title">
+							<b> <h:outputText id="totalRecord"
+									value="#{bean.size}" />
+							</b> - Expensive(s)<a class="heading-elements-toggle"><i
+								class="icon-more"></i></a>
+						</h6>
+					</div>
+					<div class="col-lg-6 col-sm-8 col-xs-12 text-right">
+						<div class="form-group m-b-10">
+							<p:outputPanel id="actionButtons">
+								<p:commandButton value="&#xea0e; #{msg['add']}"
+									class="btn bg-success font-iconmoon m-r-0"
+									title="#{msg['add']}" update="growls"
+									action="#{bean.addPage}"
+									onstart="PF('progressDlg').show()"
+										onsuccess="PF('progressDlg').hide()">
+									<f:setPropertyActionListener value="ADD"
+										target="#{bean.action}"></f:setPropertyActionListener>
+								</p:commandButton>
+						
+								<p:commandButton value="&#xe912; #{msg['edit']}"
+									title="#{msg['edit']}" class="btn bg-primary font-iconmoon"
+									action="#{bean.editpage}"
+									onstart="PF('progressDlg').show()"
+										onsuccess="PF('progressDlg').hide()" update="growls">
+									<f:setPropertyActionListener value="EDIT"
+									target="#{bean.action}"></f:setPropertyActionListener>
+								</p:commandButton>
+						
+								<p:commandButton value="&#xea18; #{msg['view']}"
+									title="#{msg['view']}" class="btn bg-info font-iconmoon"
+									onstart="PF('progressDlg').show()" update="growls"
+										onsuccess="PF('progressDlg').hide()"
+									action="#{bean.getStockUploadDetails}">
+								</p:commandButton>
+								<p:commandButton value="&#xe916; #{msg['clear']}"
+									onstart="PF('progressDlg').show()" update="growls"
+										onsuccess="PF('progressDlg').hide()" title="#{msg['clear']}"
+									class="btn bg-slate font-iconmoon"
+									action="#{bean.clearButton}">
+								</p:commandButton>
+								<ui:remove>
+									<p:commandButton id="DownloadAsExcel"
+									value="&#xe90e;&nbsp;DownloadAsExcel" title="Download"
+									actionListener="#{bean.excelDownload}"
+									class="btn bg-info heading-btn  font-iconmoon" ajax="false">
+									<p:fileDownload value="#{bean.file}" />
+								</p:commandButton>
+								</ui:remove>
+							</p:outputPanel>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-info m-b-0">
+					<div class="panel-body p-0">
+						<div class="table-responsive">
+							<p:outputPanel id="tablepanel">
+								<p:dataTable id="table" var="list" class="table"
+									widgetVar="liststockLazyListWdgr" tableStyleClass=""
+									lazy="true"
+									selection="#{bean.selectexpensivedto}"
+									value="#{bean.expensiveLazyList}"
+									rowKey="#{list.id}"
+									
+									paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+									paginator="true" paginatorPosition="bottom"
+									rowsPerPageTemplate="5,10,15,50" rows="10" rowIndexVar="idx"
+									emptyMessage="#{msg['no_record_found']}">
+
+									<p:ajax event="filter" oncomplete="updateFilterSelection()" />
+
+									<p:ajax event="rowSelectRadio"
+										listener="#{bean.onRowSelect}"
+										update=":#{p:component('actionButtons')}" />
+
+									<p:column headerText="#" styleClass="text-center width-3">
+										<f:facet name="header">
+											<p:outputLabel value="#{idx+1}" />
+										</f:facet>
+										<h:outputText styleClass="ui-column-title" value="#{idx+1}"></h:outputText>
+									</p:column>
+									
+										<p:column headerText="Item Name"
+										styleClass="width-10 text-center" sortBy="#{list.itemname}"
+										filterBy="#{list.itemname}"
+										filterMatchMode="#{list.itemname}">
+												<h:outputText styleClass="ui-column-title"
+											value="#{list.itemname}"></h:outputText>
+									</p:column>
+									
+									<p:column headerText="Amount"
+										styleClass="width-10 text-center" sortBy="#{list.amount}"
+										filterBy="#{list.amount}"
+										filterMatchMode="#{list.amount}">
+										<h:outputText styleClass="ui-column-title"
+											value="#{list.amount}"></h:outputText>
+									</p:column>
+
+									<p:column headerText="Gst Amount"
+										styleClass="width-10 text-center" sortBy="#{list.gstamount}"
+										filterBy="#{list.gstamount}"
+										filterMatchMode="#{list.gstamount}">
+										<h:outputText styleClass="ui-column-title"
+											value="#{list.gstamount}"></h:outputText>
+									</p:column>
+
+									<p:column headerText="GST Number"
+										styleClass="width-10 text-center" sortBy="#{list.gstno}"
+										filterBy="#{list.gstno}"
+										filterMatchMode="#{list.gstno}">
+										<h:outputText styleClass="ui-column-title"
+											value="#{list.gstno}"></h:outputText>
+									</p:column>
+
+									<p:column headerText="Vendor Name" sortBy="#{list.vendorname}"
+										styleClass="width-20" filterBy="#{list.vendorname}"
+										filterMatchMode="contains">
+										<f:facet name="header">
+											<p:outputLabel value="Vendor Name" />
+										</f:facet>
+										<h:outputText styleClass="ui-column-title"
+											value="#{list.vendorname}"></h:outputText>
+									</p:column>
+
+									<p:column headerText="Created Date"
+										sortBy="#{list.date}" sortable="true"
+										filterBy="#{list.date}"
+										styleClass="width-12 text-center form-group_calend"
+										filterMatchMode="exact">
+										<f:facet name="filter">
+											<p:calendar id="fromDate" pattern="dd-MMM-yyyy"
+												placeholder="dd-mmm-yyyy" mask="true"
+												onchange="PF('liststockTransferLazyListWdgr').filter()"
+												styleClass="form-control calend-icon" yearRange="c-10:c+10"
+												navigator="true">
+												<p:ajax event="dateSelect"
+													oncomplete="PF('liststockLazyListWdgr').filter()" />
+												<p:ajax event="change" execute="@this"
+													oncomplete="PF('liststockLazyListWdgr').filter()" />
+											</p:calendar>
+										</f:facet>
+										<p:outputLabel value="#{list.date}">
+											<f:convertDateTime pattern="dd-MMM-yyyy"
+												timeZone="#{loginBean.timeZone}" />
+										</p:outputLabel>
+									</p:column>
+
+									<p:column headerText="Modified Date"
+										sortBy="#{list.modifydate}" sortable="true"
+										filterBy="#{list.modifydate}"
+										styleClass="width-12 text-center form-group_calend"
+										filterMatchMode="exact">
+										<f:facet name="filter">
+											<p:calendar id="modifiedDate" pattern="dd-MMM-yyyy"
+												placeholder="dd-mmm-yyyy" mask="true"
+												onchange="PF('liststockLazyListWdgr').filter()"
+												styleClass="form-control calend-icon" yearRange="c-10:c+10"
+												navigator="true">
+												<p:ajax event="dateSelect"
+													oncomplete="PF('liststockLazyListWdgr').filter()" />
+												<p:ajax event="change" execute="@this"
+													oncomplete="PF('liststockLazyListWdgr').filter()" />
+											</p:calendar>
+										</f:facet>
+										<p:outputLabel value="#{list.modifydate}">
+											<f:convertDateTime pattern="dd-MMM-yyyy"
+												timeZone="#{loginBean.timeZone}" />
+										</p:outputLabel>
+									</p:column>
+
+
+
+									<p:column headerText="#{msg['select']}" selectionMode="single"
+										styleClass="width-4 text-center">
+									</p:column>
+
+								</p:dataTable>
+
+								<p:remoteCommand name="updateFilterSelection"
+									update=":#{p:component('totalRecord')}" autoRun="true" />
+							</p:outputPanel>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+
+			<!-- Confirm Delete Start -->
+			<p:dialog header="#{msg['confirmation_delete_title']}"
+				draggable="false" modal="true"
+				styleClass="p-0 overlay-pop modal-dialog" closable="true"
+				width="30%" widgetVar="deleteConfirm" showEffect="fade"
+				hideEffect="fade" closeOnEscape="true" resizable="false"
+				id="deleteConfirmID">
+				<div class="modal-body">
+					<p:outputPanel id="deleteDialogPanel">
+						<h:outputText value="#{msg['delete_record']}" />
+						<br />
+					</p:outputPanel>
+				</div>
+				<div class="modal-footer m-t-10">
+					<p:commandButton value="&#xed6a;&nbsp;#{msg['no']}"
+						title="#{msg['no']}"
+						styleClass="btn bg-slate heading-btn font-iconmoon"
+						oncomplete="PF('deleteConfirm').hide()" />
+					<p:commandButton ajax="false"
+						styleClass="btn bg-success heading-btn font-iconmoon"
+						title="#{msg['yes']}" value="&#xed6e;&nbsp;#{msg['yes']}"
+						onclick="PF('progressDlg').show();"
+						action="#{bean.delete}"
+						oncomplete="PF('deleteConfirm').hide()">
+					</p:commandButton>
+				</div>
+			</p:dialog>
+			<!-- Confirm Delete End -->
+		</h:form>
+	</ui:define>
+</ui:composition>

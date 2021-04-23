@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/pages/template/layout.xhtml">
+	<ui:define name="content">
+		<ui:param name="bean" value="#{customerMasterBean}"></ui:param>
+		<h:form id="suppForm">
+			<title>Orffosoft | View CustomerMaster</title>
+			<!-- Page Header -->
+			<div class="page-header page-header-default">
+				<div class="page-header-content">
+					<div class="page-title">
+						<h4> View CustomerMaster</h4>
+						<ul class="breadcrumb">
+							<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+									class="fa fa-home m-r-5"></i>#{msg['home']}</a></li>
+							<li>Online Billing Cabinate</li>
+							<li> View CustomerMaster</li>
+						</ul>
+						<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+					</div>
+					<ui:include src="/pages/pageHeadingElements.xhtml" />
+				</div>
+			</div>
+			<!-- End Page Header -->
+			<div class="content">
+				<div
+					class="panel-group panel-group-control panel-group-control-right m-b-15"
+					id="accordion-control-right">
+					<div class="panel panel-info ">
+						<div class="panel-heading">
+							<h6 class="panel-title"> View CustomerMaster</h6>
+						</div>
+						<div id="accordion-control-right-group1"
+							class="panel-collapse collapse in">
+
+							<p:outputPanel id="panel1">
+								<div
+									class="panel-body p-t-10 p-b-10 page-scroll-without-process">
+
+									<div class="row view-style">
+										<div class="col-lg-3 col-md-3 col-sm-6">
+											<div class="form-group">
+												<p:outputLabel value="Customer Name" />
+												<h:outputText
+													value="#{bean.customerMaster.name}" class="" />
+											</div>
+										</div>
+
+										<div class="col-lg-3 col-md-3 col-sm-6">
+											<div class="form-group">
+												<p:outputLabel value="Customer Mobile No" />
+												<h:outputText
+													value="#{bean.customerMaster.primaryContactNumber}"
+													class="" />
+											</div>
+										</div>
+										<div class="col-lg-3 col-md-3 col-sm-6">
+											<div class="form-group">
+												<p:outputLabel value="Address" />
+												<h:outputText value="#{bean.customerMaster.customerAddress}" />
+											</div>
+										</div>
+
+
+									</div>
+
+									<div class="row view-style p-b-15">
+										<div class="col-lg-12 col-md-12 col-sm-12 text-right">
+											<p:commandButton value="&#xeddf; #{msg['back']}"
+												title="#{msg['back']}"
+												styleClass="btn btn-sm bg-info font-iconmoon m-l-10"
+												action="#{bean.showList}" immediate="true"
+												onstart="PF('progressDlg').show()"
+										onsuccess="PF('progressDlg').hide()"/>
+										</div>
+									</div>
+								</div>
+							</p:outputPanel>
+						</div>
+					</div>
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

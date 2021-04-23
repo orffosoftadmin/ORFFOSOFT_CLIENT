@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	template="/pages/template/layout.xhtml">
+	<ui:define name="content">
+		<title>Orffosoft | Create Item</title>
+		<!-- Page Header -->
+		<div class="page-header page-header-default">
+			<div class="page-header-content">
+				<div class="page-title">
+					<h4>#{productVarietyMasterBean.action eq 'ADD' ?
+						msg['item_add'] : msg['item_edit']}</h4>
+					<ul class="breadcrumb">
+						<li><a href="#{request.contextPath}/pages/home.xhtml"><i
+								class="icon-home2 position-left"></i>#{msg['home']}</a></li>
+						<li>#{msg['online_master_menu']}</li>
+						<li class="active">#{productVarietyMasterBean.action eq 'ADD'
+							? msg['item_add'] : msg['item_edit']}</li>
+					</ul>
+					<a class="heading-elements-toggle"><i class="icon-more"></i></a>
+				</div>
+				<ui:include src="/pages/pageHeadingElements.xhtml" />
+			</div>
+		</div>
+		<!-- Page Header End -->
+		<div class="content ">
+			<div class="panel ">
+				<div class="panel-heading bg-info">
+					<h6 class="panel-title">
+
+						#{msg['item_master']} <span class="pull-right text13"> (<span
+							class="text-danger">*</span> #{msg['mand_fields']})
+						</span>
+					</h6>
+				</div>
+
+				<div class="panel-body page-scroll-without-process p-t-10">
+
+					<div class="page-header-content">
+						<p:outputLabel class="fa-input" value="GRN Number"
+							style="font-size:15px" />
+					</div>
+
+					<p:selectOneMenu id="advanced" value="#{qrCodeGenerateBean.qrCodeItemDTO.goodsReceiptNote_H}"
+						converter="#{themeConverter}" panelStyle="width:180px"
+						effect="fade" style="width:260px" filter="true"
+						filterMatchMode="startsWith">
+						
+						<f:selectItems value="#{qrCodeGenerateBean.listgrnh}" var="theme" itemLabel=" #{theme.grn_H_Number}"  itemValue="#{theme}" />
+					</p:selectOneMenu>
+					
+					<div class="text-right">
+					<div class="form-group m-b-10">
+						<p:commandButton value="&#xed6a;&nbsp;#{msg['cancel']}"
+							title="#{msg['cancel']}" immediate="true"
+							action="#{productVarietyMasterBean.getVarityList}"
+							class="btn bg-slate heading-btn  font-iconmoon">
+						</p:commandButton>
+						<p:commandButton
+							value="&#xe98e;&nbsp;#{msg['search']}"
+							title="#{  msg['search']}"
+							binding="#{submit}" id="submit"
+							onstart="PF('progressDlg').show()"
+							onsuccess="PF('progressDlg').hide()"
+							action="#{qrCodeGenerateBean.getGRNDetail}"
+							class="btn bg-success heading-btn  font-iconmoon"
+							rendered="#{productVarietyMasterBean.action ne 'VIEW'}">
+						</p:commandButton>
+						</div>
+					</div>
+
+					<p:outputPanel id="tablepanel">
+						<p:dataTable id="table" var="data" class="table" widgetVar="table"
+							tableStyleClass="" lazy="true"
+							value="#{qrCodeGenerateBean.listgrnd}"
+							rowKey="#{data.varityId}"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							paginator="true" paginatorPosition="bottom"
+							rowsPerPageTemplate="5,10,15" rows="10" rowIndexVar="idx"
+							emptyMessage="#{msg['no_record_found']}">
+							<p:ajax event="rowSelectRadio"
+								listener="#{productVarietyMasterBean.onRowSelect}"
+								 />
+							<p:ajax event="filter" oncomplete="updateFilterSelection()" />
+							
+							<p:column headerText="#{msg['s_no']}"
+								styleClass="text-center width-3">
+								<h:outputText value="#{idx+1}" />
+							</p:column>
+
+							<p:column 
+								styleClass="width-17" 
+								headerText="Item Name">
+								<h:outputText value="#{data.productVarietyMaster.name}"></h:outputText>
+							</p:column>
+
+							<p:column 
+								styleClass="width-17" 
+								filterMatchMode="contains" 
+								headerText="Item Qnty">
+								<h:outputText value="#{data.grn_D_Item_Qnty}"></h:outputText>
+							</p:column>
+							
+								<p:column 
+								styleClass="width-17" 
+								filterMatchMode="contains" 
+								headerText="Remain Qnty To Generate">
+								<h:outputText value="#{data.varityName}"></h:outputText>
+							</p:column>
+								<p:column 
+								styleClass="width-17" 
+								filterMatchMode="contains" 
+								headerText="Number of Qnty To Generate">
+								<h:outputText value="#{data.varityName}"></h:outputText>
+							</p:column>
+
+							<p:column headerText="Status" 
+								styleClass="width-4 text-center">
+							</p:column>
+							
+							<p:column headerText="Action" 
+								styleClass="width-4 text-center">
+							</p:column>
+
+						</p:dataTable>
+					</p:outputPanel>
+
+
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+/*only numbers*/
+/* function validMobileNumber(evt){
+       var charCode = (evt.which) ? evt.which : event.keyCode
+       if (((charCode &lt; 48 || charCode &gt; 57)))
+          return false;
+       return true;
+ } */
+ /* for land phone number  */
+ function validLandPhoneNumber(evt){
+       var charCode = (evt.which) ? evt.which : event.keyCode
+       if ((charCode &gt; 31)  &amp;&amp; ((charCode &lt; 48 || charCode &gt; 57)) &amp;&amp; 
+       (charCode &lt; 45 || charCode &gt; 45))
+          return false;
+       return true;
+ }
+ 
+/*only numbers*/
+function checkNumbersOnly(evt){
+       var charCode = (evt.which) ? evt.which : event.keyCode
+       if (charCode != 8 &amp;&amp; (charCode &lt; 48 || charCode &gt; 57))
+          return false;
+       return true;
+    }
+function allowOnlyAlphabetsSpace(evt){
+	  var charCode = (evt.which) ? evt.which : event.keyCode
+	  if(charCode &gt; 32 &amp;&amp; (charCode &lt; 65 || charCode &gt; 91) &amp;&amp; (charCode &lt; 97 || charCode &gt; 123)){
+		  return false
+	  }
+	return true;
+}    
+    
+function checkAlphaNumericSpace(evt) /*Alphanumeric*/
+{
+	
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode &gt; 32 &amp;&amp; (charCode &lt; 48 || charCode &gt; 57) &amp;&amp;
+    
+    
+    
+    (charCode &gt; 32 &amp;&amp; (charCode &lt; 65 || charCode &gt; 90) &amp;&amp; (charCode &lt; 97 || charCode &gt; 122)) || charCode ==32 )
+       return false;
+   
+
+    return true;
+ }   
+ 
+ 
+function checkAlphaNumericSpecial(evt) /*Alphanumeric special*/
+{
+	
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode &gt; 42 &amp;&amp; (charCode &lt; 48 || charCode &gt; 57) &amp;&amp;
+   
+    (charCode &gt; 42 &amp;&amp; (charCode &lt; 65 || charCode &gt; 90) &amp;&amp; (charCode &lt; 97 || charCode &gt; 122)) )
+       return false;
+   
+
+    return true;
+ }
+ 
+</script>
+	</ui:define>
+</ui:composition>
